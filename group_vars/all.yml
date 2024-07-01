@@ -8,7 +8,7 @@ bin_dir_path: "{{ home }}/.local/bin"
 dotfiles_dir_path: "{{ home }}/dotfiles"
 fehbg_file_path: "{{ home }}/.fehbg"
 background_images_dir_path: "{{ home }}/personal-projects/background-images"
-core_packages:
+core_apt_packages:
     - "git"
     - "snapd"
     - "curl"
@@ -18,9 +18,13 @@ core_packages:
     - "preload"
     - "htop"
     - "tree"
-    - "python"
+    - "python3"
+    - "python3-pip"
+    - "python3.10-venv"
     - "docker.io"
     - "tmux"
+core_pip_packages:
+    - "pexpect"
 productivity_tools:
     - "gimp"
     - "kitty"
@@ -43,11 +47,6 @@ personal_projects:
     - "wheels"
 npm_packages:
     - "yarn"
-    - "eslint"
-    - "typescript-language-server"
-    - "typescript"
-    - "ts-node"
-    - "prettier"
     - "expo-cli"
     - "eas-cli"
 oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"

@@ -22,7 +22,6 @@
       - import_tasks: tasks/nvim.yml
       - import_tasks: tasks/nvim-wsl.yml
         when: is_wsl == true
-      - import_tasks: tasks/nvim-packages.yml
       - import_tasks: tasks/fonts.yml
       - import_tasks: tasks/brave.yml
         when: is_wsl == false

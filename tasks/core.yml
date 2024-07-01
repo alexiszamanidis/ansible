@@ -1,7 +1,15 @@
-- name: Install core system packages
+- name: Install core apt system packages
   become: true
   apt:
       name: "{{ item }}"
       state: latest
   tags: &tags ["install", "core"]
-  loop: "{{ core_packages }}"
+  loop: "{{ core_apt_packages }}"
+
+- name: Install core pip system packages
+  become: true
+  pip:
+      name: "{{ item }}"
+      state: latest
+  tags: *tags
+  loop: "{{ core_pip_packages }}"
