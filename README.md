@@ -45,7 +45,7 @@ history -c
 git clone https://github.com/alexiszamanidis/ansible.git ~/ansible && \
 cd ~/ansible && \
 git remote set-url origin git@github.com:alexiszamanidis/ansible.git && \
-chmod +x ansible docker sync-apps && ./ansible
+chmod +x ansible sync-apps && ./ansible
 ```
 
 3. Start the installation process
