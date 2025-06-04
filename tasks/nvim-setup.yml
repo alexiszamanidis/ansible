@@ -1,7 +1,0 @@
-- name: Install nvim plugins
-  shell: nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync"
-  tags: &tags ["install", "nvim-setup", "nvim"]
-#
-# - name: Install nvim treesitter parsers
-#   shell: nvim --headless -c "TSInstallSync all" -c q
-#   tags: *tags

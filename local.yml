@@ -26,7 +26,6 @@
       - import_tasks: tasks/brave.yml
         when: is_wsl == false
       - import_tasks: tasks/dotfiles.yml
-      # - import_tasks: tasks/nvim-setup.yml
       - import_tasks: tasks/productivity-tools.yml
         when: is_wsl == false
       - import_tasks: tasks/background-images.yml
