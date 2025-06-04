@@ -25,7 +25,6 @@ core_apt_packages:
     - "docker.io"
     - "tmux"
 productivity_tools:
-    - "gimp"
     - "kitty"
     - "i3"
     - "i3blocks"
