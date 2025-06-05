@@ -21,7 +21,7 @@
   tags: *tags
 
 - name: Set authorized key took from file
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ user }}"
     state: present
     key: "{{ home }}/.ssh/id_rsa.pub"

@@ -1,7 +1,7 @@
 ---
 # Personal
 - name: Git personal setup email
-  git_config:
+  community.general.git_config:
     name: user.email
     scope: global
     value: "alexiszamanidis@outlook.com"
@@ -9,7 +9,7 @@
     - git-personal
 
 - name: Git personal setup name
-  git_config:
+  community.general.git_config:
     name: user.name
     scope: global
     value: "alexiszamanidis"
@@ -18,7 +18,7 @@
 
 # Work
 - name: Git work setup email
-  git_config:
+  community.general.git_config:
     name: user.email
     scope: global
     value: "Alexis.Zamanidis@Openbet.com"
@@ -26,7 +26,7 @@
     - git-work
 
 - name: Git work setup name
-  git_config:
+  community.general.git_config:
     name: user.name
     scope: global
     value: "alexis.zamanidis"

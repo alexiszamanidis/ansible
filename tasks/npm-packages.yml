@@ -1,6 +1,6 @@
 ---
 - name: Install npm packages
-  npm:
+  community.general.npm:
     name: "{{ item }}"
     global: true
   tags: ["install", "npm-packages"]
