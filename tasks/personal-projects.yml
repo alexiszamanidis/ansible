@@ -3,27 +3,24 @@
   ansible.builtin.file:
     path: "{{ personal_projects_dir_path }}"
     state: directory
-  tags: &tags ["install", "personal-projects"]
+    mode: "0755"
 
 - name: Check if repositories exist
   ansible.builtin.stat:
     path: "{{ personal_projects_dir_path }}/{{ item }}"
   register: repositories_stats
-  tags: *tags
   with_items: "{{ personal_projects }}"
 
 - name: Clone repositories
   ansible.builtin.git:
-    repo: "git@github.com:alexiszamanidis/{{ item.item }}.git"
+    repo: git@github.com:alexiszamanidis/{{ item.item }}.git
     dest: "{{ personal_projects_dir_path }}/{{ item.item }}"
     recursive: true
     update: true
     accept_hostkey: true
     key_file: "{{ dest_key }}"
-  # depth: 1
-  # version: master
-  tags: *tags
-  when: item.stat.exists == false or item.stat.isdir == false
+    version: master
+  when: not item.stat.exists or not item.stat.isdir
   loop: "{{ repositories_stats.results }}"
   loop_control:
     label: "{{ item.item }}"

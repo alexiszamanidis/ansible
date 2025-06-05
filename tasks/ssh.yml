@@ -4,21 +4,18 @@
     dest: "{{ dest_key | dirname }}"
     mode: "0700"
     state: directory
-  tags: &tags ["install", "ssh"]
 
 - name: Install ssh key
   ansible.builtin.copy:
     src: "{{ source_key }}"
     dest: "{{ dest_key }}"
     mode: "0600"
-  tags: *tags
 
 - name: Install ssh key public
   ansible.builtin.copy:
     src: "{{ source_key }}.pub"
     dest: "{{ dest_key }}.pub"
     mode: "0644"
-  tags: *tags
 
 - name: Set authorized key took from file
   ansible.posix.authorized_key:

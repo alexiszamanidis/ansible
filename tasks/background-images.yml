@@ -3,23 +3,23 @@
   ansible.builtin.stat:
     path: "{{ fehbg_file_path }}"
   register: fehbg_stats
-  tags: &tags ["install", "background-images"]
 
 - name: Select random image
-  ansible.builtin.shell: 'find "{{ background_images_dir_path }}" -maxdepth 2 -type f -not -path "{{ background_images_dir_path }}/.git/*"  | shuf -n 1'
-  register: random_image
-  tags: *tags
-  when: fehbg_stats.stat.exists == false or fehbg_stats.stat.isdir == true
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      find "{{ background_images_dir_path }}" -maxdepth 2 -type f -not -path "{{ background_images_dir_path }}/.git/*" | shuf -n 1
+  changed_when: false
+  when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
 - name: Create .fehbg file
   ansible.builtin.template:
     src: .fehbg.j2
     dest: ~/.fehbg
     mode: u=rwx,g=rx,o=r
-  tags: *tags
-  when: fehbg_stats.stat.exists == false or fehbg_stats.stat.isdir == true
+  when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
 - name: Set background image
   ansible.builtin.command: "{{ fehbg_file_path }}"
-  tags: *tags
-  when: fehbg_stats.stat.exists == false or fehbg_stats.stat.isdir == true
+  changed_when: false
+  when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir

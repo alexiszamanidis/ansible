@@ -3,6 +3,6 @@
   become: true
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: latest
-  tags: ["install", "productivity-tools"]
+    state: present
+  tags: [install, productivity-tools]
   loop: "{{ productivity_tools }}"

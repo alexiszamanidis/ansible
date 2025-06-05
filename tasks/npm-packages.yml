@@ -3,5 +3,4 @@
   community.general.npm:
     name: "{{ item }}"
     global: true
-  tags: ["install", "npm-packages"]
   loop: "{{ npm_packages }}"

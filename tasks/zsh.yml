@@ -2,56 +2,53 @@
 - name: Install ZSH
   become: true
   ansible.builtin.apt:
-    name: ["zsh"]
-  tags: &tags ["install", "zsh"]
+    name: [zsh]
 
-- ansible.builtin.pause:
-    prompt: "Enter unix password"
+- name: Enter unix password
+  ansible.builtin.pause:
+    prompt: Enter unix password
     echo: false
   register: unix_password
-  tags: *tags
 
 - name: Change shell and set zsh as default
   ansible.builtin.expect:
-    command: "chsh -s /usr/bin/zsh"
+    command: chsh -s /usr/bin/zsh
     responses:
       (?i)password: "{{ unix_password.user_input }}"
-    creates: ".shell_is_zsh"
-  tags: *tags
+    creates: .shell_is_zsh
 
 - name: Check if .oh-my-zsh exists
   ansible.builtin.stat:
     path: "{{ oh_my_zsh_dir_path }}"
   register: oh_my_stats
-  tags: *tags
 
 - name: Download Oh-My-Zsh installation script
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     dest: "{{ home }}/.oh-my-zsh-installer"
     mode: a+x
-  tags: *tags
-  when: oh_my_stats.stat.exists == False
+  when: not oh_my_stats.stat.exists
 
 - name: Install Oh-My-Zsh
   ansible.builtin.shell: "{{ home }}/.oh-my-zsh-installer && rm -rf {{ home }}/.oh-my-zsh-installer"
-  tags: *tags
-  when: oh_my_stats.stat.exists == False
+  changed_when: false
+  when: not oh_my_stats.stat.exists
 
 - name: Check if plugins exist
   ansible.builtin.stat:
     path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.dir }}"
   register: plugins_stats
-  tags: *tags
   with_items: "{{ zsh_plugins }}"
 
 - name: Install zsh plugins
   ansible.builtin.git:
     repo: "{{ item.item.repo }}"
     dest: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.item.dir }}"
-  # depth: 1
-  tags: *tags
-  when: item.stat.exists == false or item.stat.isdir == false
+    recursive: true
+    update: true
+    depth: 1
+    version: master
+  when: not item.stat.exists or not item.stat.isdir
   loop: "{{ plugins_stats.results }}"
   loop_control:
     label: "{{ item.item }}"

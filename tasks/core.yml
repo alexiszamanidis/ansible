@@ -3,6 +3,5 @@
   become: true
   ansible.builtin.apt:
     name: "{{ item }}"
-    state: latest
-  tags: ["install", "core"]
+    state: present
   loop: "{{ core_apt_packages }}"
