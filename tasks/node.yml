@@ -1,32 +1,33 @@
+---
 - name: Install nodejs and npm
   become: true
-  apt:
-      name: ["nodejs", "npm"]
+  ansible.builtin.apt:
+    name: ["nodejs", "npm"]
   tags: &tags ["install", "node"]
 
 - name: Create .npm-global directory
-  file:
-      path: ~/.local/.npm-global
-      state: directory
+  ansible.builtin.file:
+    path: ~/.local/.npm-global
+    state: directory
   tags: *tags
 
 - name: Add npm to path
-  shell: PATH=~/.local/.npm-global/bin:$PATH
+  ansible.builtin.shell: PATH=~/.local/.npm-global/bin:$PATH
   tags: *tags
 
-- name: npm global settings
-  shell: npm config set prefix '~/.local/.npm-global'
+- name: Npm global settings
+  ansible.builtin.command: npm config set prefix '~/.local/.npm-global'
   tags: *tags
 
 - name: Download nvm
-  get_url:
-      url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
-      dest: ~/.nvm-installer
-      mode: a+x
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
+    dest: ~/.nvm-installer
+    mode: a+x
   tags: *tags
 
 - name: Install nvm
-  shell: ~/.nvm-installer && rm -rf ~/.nvm-installer
+  ansible.builtin.shell: ~/.nvm-installer && rm -rf ~/.nvm-installer
   tags: *tags
 # TODO: Should fix this!
 # - name: Install version 16 of Node

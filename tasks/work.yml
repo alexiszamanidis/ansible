@@ -1,25 +1,26 @@
+---
 - name: Find files and directories in submodule directory
-  find:
-      paths: ansible-work
-      file_type: any
-      hidden: yes
+  ansible.builtin.find:
+    paths: ansible-work
+    file_type: any
+    hidden: true
   register: ansible_work_submodule_stat
   tags: &tags ["install", "work"]
 
 - name: Pull submodule if directory is empty
-  command: git submodule update --init --recursive
+  ansible.builtin.command: git submodule update --init --recursive
   args:
-      chdir: ~/ansible
+    chdir: ~/ansible
   tags: *tags
   when: ansible_work_submodule_stat.files | length == 0
 
 - name: Check if ansible-work/local.yml exists
-  stat:
-      path: ansible-work/local.yml
+  ansible.builtin.stat:
+    path: ansible-work/local.yml
   register: work_local_yaml_exists
   tags: *tags
 
 - name: Include ansible-work/local.yml if it exists
-  include_tasks: ansible-work/local.yml
+  ansible.builtin.include_tasks: ansible-work/local.yml
   when: work_local_yaml_exists.stat.exists
   tags: *tags

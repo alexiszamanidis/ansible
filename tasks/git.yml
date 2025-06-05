@@ -1,33 +1,34 @@
+---
 # Personal
 - name: Git personal setup email
   git_config:
-      name: user.email
-      scope: global
-      value: "alexiszamanidis@outlook.com"
+    name: user.email
+    scope: global
+    value: "alexiszamanidis@outlook.com"
   tags:
-      - git-personal
+    - git-personal
 
 - name: Git personal setup name
   git_config:
-      name: user.name
-      scope: global
-      value: "alexiszamanidis"
+    name: user.name
+    scope: global
+    value: "alexiszamanidis"
   tags:
-      - git-personal
+    - git-personal
 
 # Work
 - name: Git work setup email
   git_config:
-      name: user.email
-      scope: global
-      value: "Alexis.Zamanidis@Openbet.com"
+    name: user.email
+    scope: global
+    value: "Alexis.Zamanidis@Openbet.com"
   tags:
-      - git-work
+    - git-work
 
 - name: Git work setup name
   git_config:
-      name: user.name
-      scope: global
-      value: "alexis.zamanidis"
+    name: user.name
+    scope: global
+    value: "alexis.zamanidis"
   tags:
-      - git-work
+    - git-work

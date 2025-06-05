@@ -1,14 +1,15 @@
+---
 version: "3.8"
 
 services:
-    ubuntu_dev:
-        build:
-            context: .
-            dockerfile: Dockerfile
-            args:
-                USERNAME: ${USERNAME:-alexzam} # Passes the environment variable to build
-        container_name: ${CONTAINER_NAME:-ansible}
-        tty: true
-        user: ${USERNAME:-alexzam} # Sets the user for the running container
-        environment:
-            - USERNAME=${USERNAME:-alexzam}
+  ubuntu_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: ${USERNAME:-alexzam} # Passes the environment variable to build
+    container_name: ${CONTAINER_NAME:-ansible}
+    tty: true
+    user: ${USERNAME:-alexzam} # Sets the user for the running container
+    environment:
+      - USERNAME=${USERNAME:-alexzam}

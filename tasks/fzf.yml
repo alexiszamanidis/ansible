@@ -1,55 +1,56 @@
+---
 - name: Install fzf
   become: true
-  apt:
-      name: ["fzf"]
+  ansible.builtin.apt:
+    name: ["fzf"]
   tags: &tags ["install", "fzf"]
 
 - name: Create bin directory
-  file:
-      path: "{{ bin_dir_path }}"
-      state: directory
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}"
+    state: directory
   tags: *tags
 
 - name: Install fd
   become: true
-  apt:
-      name: ["fd-find"]
+  ansible.builtin.apt:
+    name: ["fd-find"]
   tags: *tags
 
 - name: Check that the fd exists
-  stat:
-      path: "{{ bin_dir_path }}/fd"
+  ansible.builtin.stat:
+    path: "{{ bin_dir_path }}/fd"
   register: fd_exists
   tags: *tags
 
 - name: Remove the fd folder
-  file:
-      path: "{{ bin_dir_path }}/fd"
-      state: absent
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/fd"
+    state: absent
   when: fd_exists.stat.isdir is defined and fd_exists.stat.isdir
   tags: *tags
 
 - name: Link fd
-  file:
-      path: "{{ bin_dir_path }}/fd"
-      src: /usr/bin/fdfind
-      state: link
-      force: yes
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/fd"
+    src: /usr/bin/fdfind
+    state: link
+    force: true
   tags: *tags
 
 # Alternative until bat 0.21.0 is available
 # I need this version of bat, otherwise it crushes with the ripgrep installation
 - name: Download bat
   become: true
-  get_url:
-      url: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
-      dest: ~/.bat-installer
-      mode: a+x
+  ansible.builtin.get_url:
+    url: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
+    dest: ~/.bat-installer
+    mode: a+x
   tags: *tags
 
 - name: Install bat
   become: true
-  shell: dpkg -i ~/.bat-installer && rm -rf ~/.bat-installer
+  ansible.builtin.shell: dpkg -i ~/.bat-installer && rm -rf ~/.bat-installer
   tags: *tags
 # - name: Install bat
 #   become: true

@@ -1,20 +1,21 @@
+---
 - name: Check that win32yank.exe exists
-  stat:
-      path: "{{ bin_dir_path }}/win32yank.exe"
+  ansible.builtin.stat:
+    path: "{{ bin_dir_path }}/win32yank.exe"
   register: win32yank_stats
   tags: &tags ["install", "nvim", "nvim-wsl"]
 
 - name: Download win32yank.exe
-  shell: curl -sLo/tmp/win32yank.zip https://github.com/equalsraf/win32yank/releases/download/v0.0.4/win32yank-x64.zip
+  ansible.builtin.command: curl -sLo/tmp/win32yank.zip https://github.com/equalsraf/win32yank/releases/download/v0.0.4/win32yank-x64.zip
   when: win32yank_stats.stat.exists == False
   tags: *tags
 
 - name: Unzip win32yank.exe
-  shell: unzip -p /tmp/win32yank.zip win32yank.exe > /tmp/win32yank.exe
+  ansible.builtin.shell: unzip -p /tmp/win32yank.zip win32yank.exe > /tmp/win32yank.exe
   when: win32yank_stats.stat.exists == False
   tags: *tags
 
 - name: Setup win32yank.exe
-  shell: "chmod +x /tmp/win32yank.exe && mv /tmp/win32yank.exe {{ bin_dir_path }}"
+  ansible.builtin.shell: "chmod +x /tmp/win32yank.exe && mv /tmp/win32yank.exe {{ bin_dir_path }}"
   when: win32yank_stats.stat.exists == False
   tags: *tags

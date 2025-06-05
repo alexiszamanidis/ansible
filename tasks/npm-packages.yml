@@ -1,6 +1,7 @@
+---
 - name: Install npm packages
   npm:
-      name: "{{ item }}"
-      global: yes
-  tags: &tags ["install", "npm-packages"]
+    name: "{{ item }}"
+    global: true
+  tags: ["install", "npm-packages"]
   loop: "{{ npm_packages }}"

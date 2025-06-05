@@ -1,28 +1,29 @@
+---
 - name: Install apt-transport-https
   become: true
-  apt:
-      name: ["apt-transport-https"]
+  ansible.builtin.apt:
+    name: ["apt-transport-https"]
   tags: &tags ["install", "brave"]
 
 - name: Download Brave Browser archive-keyring.gpg
   become: true
-  get_url:
-      url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-      dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
+  ansible.builtin.get_url:
+    url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
   tags: *tags
 
 - name: Add Brave repository to list of repositories
   become: true
-  copy:
-      dest: /etc/apt/sources.list.d/brave-browser-release.list
-      content: |
-          deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
-      mode: 0644
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/brave-browser-release.list
+    content: |
+      deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
+    mode: "0644"
   tags: *tags
 
 - name: Install Brave Browser
   become: true
-  apt:
-      update_cache: yes
-      name: ["brave-browser"]
+  ansible.builtin.apt:
+    update_cache: true
+    name: ["brave-browser"]
   tags: *tags

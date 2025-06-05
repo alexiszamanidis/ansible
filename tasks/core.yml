@@ -1,7 +1,8 @@
+---
 - name: Install core apt system packages
   become: true
-  apt:
-      name: "{{ item }}"
-      state: latest
-  tags: &tags ["install", "core"]
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  tags: ["install", "core"]
   loop: "{{ core_apt_packages }}"

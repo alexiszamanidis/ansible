@@ -1,56 +1,57 @@
+---
 - name: Install ZSH
   become: true
-  apt:
-      name: ["zsh"]
+  ansible.builtin.apt:
+    name: ["zsh"]
   tags: &tags ["install", "zsh"]
 
-- pause:
-      prompt: "Enter unix password"
-      echo: no
+- ansible.builtin.pause:
+    prompt: "Enter unix password"
+    echo: false
   register: unix_password
   tags: *tags
 
 - name: Change shell and set zsh as default
-  expect:
-      command: "chsh -s /usr/bin/zsh"
-      responses:
-          (?i)password: "{{ unix_password.user_input }}"
-      creates: ".shell_is_zsh"
+  ansible.builtin.expect:
+    command: "chsh -s /usr/bin/zsh"
+    responses:
+      (?i)password: "{{ unix_password.user_input }}"
+    creates: ".shell_is_zsh"
   tags: *tags
 
 - name: Check if .oh-my-zsh exists
-  stat:
-      path: "{{ oh_my_zsh_dir_path }}"
+  ansible.builtin.stat:
+    path: "{{ oh_my_zsh_dir_path }}"
   register: oh_my_stats
   tags: *tags
 
 - name: Download Oh-My-Zsh installation script
-  get_url:
-      url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-      dest: "{{ home }}/.oh-my-zsh-installer"
-      mode: a+x
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: "{{ home }}/.oh-my-zsh-installer"
+    mode: a+x
   tags: *tags
   when: oh_my_stats.stat.exists == False
 
 - name: Install Oh-My-Zsh
-  shell: "{{ home }}/.oh-my-zsh-installer && rm -rf {{ home }}/.oh-my-zsh-installer"
+  ansible.builtin.shell: "{{ home }}/.oh-my-zsh-installer && rm -rf {{ home }}/.oh-my-zsh-installer"
   tags: *tags
   when: oh_my_stats.stat.exists == False
 
 - name: Check if plugins exist
-  stat:
-      path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.dir }}"
+  ansible.builtin.stat:
+    path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.dir }}"
   register: plugins_stats
   tags: *tags
   with_items: "{{ zsh_plugins }}"
 
 - name: Install zsh plugins
   ansible.builtin.git:
-      repo: "{{ item.item.repo }}"
-      dest: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.item.dir }}"
-      # depth: 1
+    repo: "{{ item.item.repo }}"
+    dest: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.item.dir }}"
+  # depth: 1
   tags: *tags
   when: item.stat.exists == false or item.stat.isdir == false
   loop: "{{ plugins_stats.results }}"
   loop_control:
-      label: "{{ item.item }}"
+    label: "{{ item.item }}"

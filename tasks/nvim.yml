@@ -1,16 +1,17 @@
+---
 - name: Add neovim-ppa
   become: true
-  shell: add-apt-repository -y ppa:neovim-ppa/unstable
+  ansible.builtin.command: add-apt-repository -y ppa:neovim-ppa/unstable
   tags: &tags ["install", "nvim"]
 
 - name: Install neovim
   become: true
-  apt:
-      name: ["neovim"]
+  ansible.builtin.apt:
+    name: ["neovim"]
   tags: *tags
 
 - name: Install neovim prerequisites(xclip, ripgrep)
   become: true
-  apt:
-      name: ["xclip", "ripgrep"]
+  ansible.builtin.apt:
+    name: ["xclip", "ripgrep"]
   tags: *tags
