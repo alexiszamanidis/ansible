@@ -41,7 +41,7 @@ jobs:
         uses: ansible/ansible-lint@v25.5.0
         with:
           args: --fix -c ./.ansible-lint
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2
