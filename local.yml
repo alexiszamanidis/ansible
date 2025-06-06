@@ -13,11 +13,11 @@
   tasks:
     - name: Import ssh task
       ansible.builtin.import_tasks: tasks/ssh.yml
-      tags: ["install", "ssh"]
+      tags: [install, ssh]
 
     - name: Import core task
       ansible.builtin.import_tasks: tasks/core.yml
-      tags: ["install", "core"]
+      tags: [install, core]
 
     - name: Import node task
       ansible.builtin.import_tasks: tasks/node.yml
@@ -25,7 +25,7 @@
 
     - name: Import npm-packages task
       ansible.builtin.import_tasks: tasks/npm-packages.yml
-      tags: ["install", "npm-packages"]
+      tags: [install, npm-packages]
 
     - name: Import java task
       ansible.builtin.import_tasks: tasks/java.yml
@@ -33,7 +33,7 @@
 
     - name: Import fzf task
       ansible.builtin.import_tasks: tasks/fzf.yml
-      tags: ["install", "fzf"]
+      tags: [install, fzf]
 
     - name: Import zsh task
       ansible.builtin.import_tasks: tasks/zsh.yml
@@ -63,11 +63,11 @@
     - name: Import brave task
       ansible.builtin.import_tasks: tasks/brave.yml
       when: not is_wsl
-      tags: ["install", "brave"]
+      tags: [install, brave]
 
     - name: Import dotfiles task
       ansible.builtin.import_tasks: tasks/dotfiles.yml
-      tags: ["install", "dotfiles"]
+      tags: [install, dotfiles]
 
     - name: Import productivity-tools task
       ansible.builtin.import_tasks: tasks/productivity-tools.yml

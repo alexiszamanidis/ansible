@@ -2,3 +2,6 @@
 rules:
   indentation:
     spaces: 4
+  quoted-strings:
+    quote-type: double
+    required: only-when-needed
