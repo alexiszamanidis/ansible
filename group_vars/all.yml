@@ -25,6 +25,7 @@ core_apt_packages:
   - python3-pexpect
   - docker.io
   - tmux
+  - shellcheck
 productivity_tools:
   - kitty
   - i3
@@ -39,11 +40,10 @@ personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io
   - "2022"
-  - background-images
   - ryd
+  - prettier-config
+  - background-images
   - books
-  - scraper
-  - wheels
 npm_packages:
   - yarn
   - expo-cli
