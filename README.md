@@ -26,8 +26,8 @@ docker exec -it ansible bash
 
 #### External Applications
 
--   VSCode: Sign in via GitHub
--   Excalidraw: Download as PWA
+- VSCode: Sign in via GitHub
+- Excalidraw: Download as PWA
 
 ### Installation
 

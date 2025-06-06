@@ -27,7 +27,6 @@
 - name: Install nvm
   ansible.builtin.shell: ~/.nvm-installer && rm -rf ~/.nvm-installer
   changed_when: false
-
 # TODO: Should fix this!
 # - name: Install version 16 of Node
 #   ansible.builtin.shell: source ~/.bashrc && nvm install 16.16.0 && nvm alias default 16.16.0 && nvm use --delete-prefix v16.16.0 --silent

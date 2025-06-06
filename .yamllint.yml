@@ -1,7 +1,7 @@
 ---
 rules:
   indentation:
-    spaces: 4
+    spaces: 2
   quoted-strings:
     quote-type: double
     required: only-when-needed
