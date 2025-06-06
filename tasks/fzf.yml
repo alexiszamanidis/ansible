@@ -1,79 +1,71 @@
+---
 - name: Install fzf
   become: true
-  apt:
-      name: ["fzf"]
-  tags: &tags ["install", "fzf"]
+  ansible.builtin.apt:
+    name: [fzf]
 
 - name: Create bin directory
-  file:
-      path: "{{ bin_dir_path }}"
-      state: directory
-  tags: *tags
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}"
+    state: directory
+    mode: "0644"
 
 - name: Install fd
   become: true
-  apt:
-      name: ["fd-find"]
-  tags: *tags
+  ansible.builtin.apt:
+    name: [fd-find]
 
 - name: Check that the fd exists
-  stat:
-      path: "{{ bin_dir_path }}/fd"
+  ansible.builtin.stat:
+    path: "{{ bin_dir_path }}/fd"
   register: fd_exists
-  tags: *tags
 
 - name: Remove the fd folder
-  file:
-      path: "{{ bin_dir_path }}/fd"
-      state: absent
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/fd"
+    state: absent
   when: fd_exists.stat.isdir is defined and fd_exists.stat.isdir
-  tags: *tags
 
 - name: Link fd
-  file:
-      path: "{{ bin_dir_path }}/fd"
-      src: /usr/bin/fdfind
-      state: link
-      force: yes
-  tags: *tags
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/fd"
+    src: /usr/bin/fdfind
+    state: link
+    force: true
 
 # Alternative until bat 0.21.0 is available
 # I need this version of bat, otherwise it crushes with the ripgrep installation
 - name: Download bat
   become: true
-  get_url:
-      url: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
-      dest: ~/.bat-installer
-      mode: a+x
-  tags: *tags
+  ansible.builtin.get_url:
+    url: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
+    dest: ~/.bat-installer
+    mode: a+x
 
 - name: Install bat
   become: true
-  shell: dpkg -i ~/.bat-installer && rm -rf ~/.bat-installer
-  tags: *tags
+  ansible.builtin.shell: dpkg -i ~/.bat-installer && rm -rf ~/.bat-installer
+  changed_when: false
+
 # - name: Install bat
 #   become: true
-#   apt:
+#   ansible.builtin.apt:
 #     name: ["bat"]
-#   tags: *tags
 
 # - name: Check that the bat exists
-#   stat:
-#       path: "{{ bin_dir_path }}/bat"
+#   ansible.builtin.stat:
+#     path: "{{ bin_dir_path }}/bat"
 #   register: bat_exists
-#   tags: *tags
 
 # - name: Remove the bat folder
-#   file:
+#   ansible.builtin.file:
 #     path: "{{ bin_dir_path }}/bat"
 #     state: absent
 #   when: bat_exists.stat.isdir is defined and bat_exists.stat.isdir
-#   tags: *tags
 
 # - name: Link bat
-#   file:
+#   ansible.builtin.file:
 #     path: "{{ bin_dir_path }}/bat"
 #     src: /usr/bin/batcat
 #     state: link
-#     force: yes
-#   tags: *tags
+#     force: true

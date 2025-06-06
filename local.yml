@@ -1,32 +1,80 @@
-- hosts: localhost
+---
+- name: Local tasks
+  hosts: localhost
   pre_tasks:
-      - name: Update Apt
-        become: true
-        apt:
-            force_apt_get: true
-            update_cache: true
-            state: present
-            cache_valid_time: 86400 # 1 day
-        tags: &tags ["install", "core", "productivity-tools"]
+    - name: Update Apt
+      become: true
+      ansible.builtin.apt:
+        force_apt_get: true
+        update_cache: true
+        state: present
+        cache_valid_time: 86400 # 1 day
+      tags: [install, core, productivity-tools]
   tasks:
-      - import_tasks: tasks/git.yml
-      - import_tasks: tasks/ssh.yml
-      - import_tasks: tasks/core.yml
-      - import_tasks: tasks/node.yml
-      - import_tasks: tasks/npm-packages.yml
-      - import_tasks: tasks/java.yml
-      - import_tasks: tasks/fzf.yml
-      - import_tasks: tasks/zsh.yml
-      - import_tasks: tasks/personal-projects.yml
-      - import_tasks: tasks/work.yml
-      - import_tasks: tasks/nvim.yml
-      - import_tasks: tasks/nvim-wsl.yml
-        when: is_wsl == true
-      - import_tasks: tasks/fonts.yml
-      - import_tasks: tasks/brave.yml
-        when: is_wsl == false
-      - import_tasks: tasks/dotfiles.yml
-      - import_tasks: tasks/productivity-tools.yml
-        when: is_wsl == false
-      - import_tasks: tasks/background-images.yml
-        when: is_wsl == false
+    - name: Import ssh task
+      ansible.builtin.import_tasks: tasks/ssh.yml
+      tags: [install, ssh]
+
+    - name: Import core task
+      ansible.builtin.import_tasks: tasks/core.yml
+      tags: [install, core]
+
+    - name: Import node task
+      ansible.builtin.import_tasks: tasks/node.yml
+      tags: [install, node]
+
+    - name: Import npm-packages task
+      ansible.builtin.import_tasks: tasks/npm-packages.yml
+      tags: [install, npm-packages]
+
+    - name: Import java task
+      ansible.builtin.import_tasks: tasks/java.yml
+      tags: [install, java]
+
+    - name: Import fzf task
+      ansible.builtin.import_tasks: tasks/fzf.yml
+      tags: [install, fzf]
+
+    - name: Import zsh task
+      ansible.builtin.import_tasks: tasks/zsh.yml
+      tags: [install, zsh]
+
+    - name: Import personal-projects task
+      ansible.builtin.import_tasks: tasks/personal-projects.yml
+      tags: [install, personal-projects]
+
+    - name: Import work task
+      ansible.builtin.import_tasks: tasks/work.yml
+      tags: [install, work]
+
+    - name: Import nvim task
+      ansible.builtin.import_tasks: tasks/nvim.yml
+      tags: [install, nvim]
+
+    - name: Import nvim-wsl task
+      ansible.builtin.import_tasks: tasks/nvim-wsl.yml
+      when: is_wsl
+      tags: [install, nvim, nvim-wsl]
+
+    - name: Import fonts task
+      ansible.builtin.import_tasks: tasks/fonts.yml
+      tags: [install, fonts]
+
+    - name: Import brave task
+      ansible.builtin.import_tasks: tasks/brave.yml
+      when: not is_wsl
+      tags: [install, brave]
+
+    - name: Import dotfiles task
+      ansible.builtin.import_tasks: tasks/dotfiles.yml
+      tags: [install, dotfiles]
+
+    - name: Import productivity-tools task
+      ansible.builtin.import_tasks: tasks/productivity-tools.yml
+      when: not is_wsl
+      tags: [install, productivity-tools]
+
+    - name: Import background-images task
+      ansible.builtin.import_tasks: tasks/background-images.yml
+      when: not is_wsl
+      tags: [install, background-images]

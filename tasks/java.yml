@@ -1,102 +1,105 @@
+---
 - name: Install default-jre
   become: true
-  apt:
-      name: ["default-jre"]
-  tags: &tags ["install", "java"]
+  ansible.builtin.apt:
+    name: [default-jre]
 
 - name: Install java 17(Required for the packages below)
   become: true
-  apt:
-      name: ["openjdk-17-jdk", "openjdk-17-jre"]
-  tags: *tags
+  ansible.builtin.apt:
+    name: [openjdk-17-jdk, openjdk-17-jre]
 
-- name: Download and Install sdkman
-  shell: curl -s https://get.sdkman.io | bash
-  tags: *tags
+- name: Download sdkman
+  ansible.builtin.get_url:
+    url: https://get.sdkman.io
+    dest: /tmp/sdkman_installer.sh
+    mode: "0644"
+
+- name: Install sdkman
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      /tmp/sdkman_installer.sh | bash
+  changed_when: false
 
 # TODO: Should fix this!
 # - name: Install java via sdk
 #   shell: sdk install java
-#   tags: *tags
 
 - name: Create java directory
-  file:
-      path: "{{ java_dir_path }}"
-      state: directory
-  tags: *tags
+  ansible.builtin.file:
+    path: "{{ java_dir_path }}"
+    state: directory
+    mode: "0755"
 
-- name: "Create {{ java_dir_path }}/jdt-language-server/workspace/folder directory"
-  file:
-      path: "{{ java_dir_path }}/jdt-language-server/workspace/folder"
-      state: directory
-  tags: *tags
+- name: Create jdt-language-server/workspace/folder directory
+  ansible.builtin.file:
+    path: "{{ java_dir_path }}/jdt-language-server/workspace/folder"
+    state: directory
+    mode: "0755"
 
 - name: Check that the jdt-language-server exists
-  stat:
-      path: "{{ java_dir_path }}/jdt-language-server/jdt-language-server-1.9.0-202203031534.tar.gz"
+  ansible.builtin.stat:
+    path: "{{ java_dir_path }}/jdt-language-server/jdt-language-server-1.9.0-202203031534.tar.gz"
   register: jdt_language_server_exists
-  tags: *tags
 
 - name: Download jdt-language-server
-  get_url:
-      url: https://download.eclipse.org/jdtls/milestones/1.9.0/jdt-language-server-1.9.0-202203031534.tar.gz
-      dest: "{{ java_dir_path }}/jdt-language-server"
-  when: jdt_language_server_exists.stat.exists == False
-  tags: *tags
+  ansible.builtin.get_url:
+    url: https://download.eclipse.org/jdtls/milestones/1.9.0/jdt-language-server-1.9.0-202203031534.tar.gz
+    dest: "{{ java_dir_path }}/jdt-language-server"
+    mode: "0755"
+  when: not jdt_language_server_exists.stat.exists
 
 - name: Extract jdt-language-server
-  shell: "cd {{ java_dir_path }}/jdt-language-server && tar -zxvf jdt-language-server-1.9.0-202203031534.tar.gz"
-  tags: *tags
+  ansible.builtin.shell: cd {{ java_dir_path }}/jdt-language-server && tar -zxvf jdt-language-server-1.9.0-202203031534.tar.gz
+  changed_when: false
 
 - name: Check that the lombok exists
-  stat:
-      path: "{{ java_dir_path }}/jdt-language-server/lombok.jar"
+  ansible.builtin.stat:
+    path: "{{ java_dir_path }}/jdt-language-server/lombok.jar"
   register: lombok_exists
-  tags: *tags
 
 - name: Download lombok
-  get_url:
-      url: https://projectlombok.org/downloads/lombok.jar
-      dest: "{{ java_dir_path }}/jdt-language-server"
-  when: lombok_exists.stat.exists == False
-  tags: *tags
+  ansible.builtin.get_url:
+    url: https://projectlombok.org/downloads/lombok.jar
+    dest: "{{ java_dir_path }}/jdt-language-server"
+    mode: "0755"
+  when: not lombok_exists.stat.exists
 
 - name: Check that the java-debug exists
-  stat:
-      path: "{{ java_dir_path }}/java-debug"
+  ansible.builtin.stat:
+    path: "{{ java_dir_path }}/java-debug"
   register: java_debug_exists
-  tags: *tags
 
 - name: Clone java-debug
   ansible.builtin.git:
-      repo: "https://github.com/microsoft/java-debug.git"
-      dest: "{{ java_dir_path }}/java-debug"
-      recursive: yes
-      update: yes
-      depth: 1
-  when: java_debug_exists.stat.exists == False
-  tags: *tags
+    repo: https://github.com/microsoft/java-debug.git
+    dest: "{{ java_dir_path }}/java-debug"
+    recursive: true
+    update: true
+    depth: 1
+    version: master
+  when: not java_debug_exists.stat.exists
 
 - name: Install java-debug
-  shell: "cd {{ java_dir_path }}/java-debug && ./mvnw clean install"
-  tags: *tags
+  ansible.builtin.shell: cd {{ java_dir_path }}/java-debug && ./mvnw clean install
+  changed_when: false
 
 - name: Check that the vscode-java-test exists
-  stat:
-      path: "{{ java_dir_path }}/vscode-java-test"
+  ansible.builtin.stat:
+    path: "{{ java_dir_path }}/vscode-java-test"
   register: vscode_java_test_exists
-  tags: *tags
 
 - name: Clone vscode-java-test
   ansible.builtin.git:
-      repo: "https://github.com/microsoft/vscode-java-test.git"
-      dest: "{{ java_dir_path }}/vscode-java-test"
-      recursive: yes
-      update: yes
-      depth: 1
-  when: vscode_java_test_exists.stat.exists == False
-  tags: *tags
+    repo: https://github.com/microsoft/vscode-java-test.git
+    dest: "{{ java_dir_path }}/vscode-java-test"
+    recursive: true
+    update: true
+    depth: 1
+    version: master
+  when: not vscode_java_test_exists.stat.exists
 
 - name: Install vscode-java-test
-  shell: "cd {{ java_dir_path }}/vscode-java-test && npm install && npm run build-plugin"
-  tags: *tags
+  ansible.builtin.shell: cd {{ java_dir_path }}/vscode-java-test && npm install && npm run build-plugin
+  changed_when: false

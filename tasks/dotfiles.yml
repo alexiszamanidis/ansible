@@ -1,39 +1,37 @@
+---
 - name: Install stow
   become: true
-  apt:
-      name: ["stow"]
-  tags: &tags ["install", "dotfiles"]
+  ansible.builtin.apt:
+    name: [stow]
 
 - name: Check if dotfiles exist
-  stat:
-      path: "{{ dotfiles_dir_path }}"
+  ansible.builtin.stat:
+    path: "{{ dotfiles_dir_path }}"
   register: dotfiles_stats
-  tags: *tags
 
 - name: Clone dotfiles
   ansible.builtin.git:
-      repo: "git@github.com:alexiszamanidis/dotfiles.git"
-      dest: "{{ dotfiles_dir_path }}"
-      recursive: yes
-      update: yes
-      accept_hostkey: yes
-      key_file: "{{ dest_key }}"
-      # depth: 1
-      # version: master
-  tags: *tags
-  when: dotfiles_stats.stat.exists == False
+    repo: git@github.com:alexiszamanidis/dotfiles.git
+    dest: "{{ dotfiles_dir_path }}"
+    recursive: true
+    update: true
+    accept_hostkey: true
+    key_file: "{{ dest_key }}"
+    version: master
+  when: not dotfiles_stats.stat.exists
 
 - name: Remove all default files/folders that need to be stowed (~/.zshrc)
-  file:
-      state: absent
-      path: ~/.zshrc
-  tags: *tags
+  ansible.builtin.file:
+    state: absent
+    path: ~/.zshrc
 
 - name: Stow dotfiles
-  shell: cd $HOME/dotfiles && chmod +x install stow unstow && ./install
-  tags: *tags
+  ansible.builtin.shell: |
+    cd $HOME/dotfiles && chmod +x install stow unstow && ./install
+  changed_when: false
 
 - name: Stow wsl
-  shell: cd $HOME/dotfiles && chmod +x wsl && ./wsl
-  when: is_wsl == True
-  tags: *tags
+  ansible.builtin.shell: |
+    cd $HOME/dotfiles && chmod +x wsl && ./wsl
+  changed_when: false
+  when: is_wsl

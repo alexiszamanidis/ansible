@@ -1,7 +1,8 @@
+---
 user: "{{ lookup('env', 'USER') }}"
 home: "{{ lookup('env', 'HOME') }}"
-is_wsl: "{{ (lookup('env', 'WSL_DISTRO_NAME') != '') or (lookup('env', 'IS_WSL') != '')  }}"
-source_key: "./.ssh/id_rsa"
+is_wsl: "{{ (lookup('env', 'WSL_DISTRO_NAME') != '') or (lookup('env', 'IS_WSL') != '') }}"
+source_key: ./.ssh/id_rsa
 dest_key: "{{ home }}/.ssh/id_rsa"
 java_dir_path: "{{ home }}/java"
 bin_dir_path: "{{ home }}/.local/bin"
@@ -9,69 +10,57 @@ dotfiles_dir_path: "{{ home }}/dotfiles"
 fehbg_file_path: "{{ home }}/.fehbg"
 background_images_dir_path: "{{ home }}/personal-projects/background-images"
 core_apt_packages:
-    - "git"
-    - "snapd"
-    - "curl"
-    - "wget"
-    - "zip"
-    - "trash-cli"
-    - "preload"
-    - "htop"
-    - "tree"
-    - "python3"
-    - "python3-pip"
-    - "python3-venv"
-    - "python3-pexpect"
-    - "docker.io"
-    - "tmux"
+  - git
+  - snapd
+  - curl
+  - wget
+  - zip
+  - trash-cli
+  - preload
+  - htop
+  - tree
+  - python3
+  - python3-pip
+  - python3-venv
+  - python3-pexpect
+  - docker.io
+  - tmux
 productivity_tools:
-    - "kitty"
-    - "i3"
-    - "i3blocks"
-    - "rofi"
-    - "compton"
-    - "dunst"
-    - "feh"
-    - "flameshot"
+  - kitty
+  - i3
+  - i3blocks
+  - rofi
+  - compton
+  - dunst
+  - feh
+  - flameshot
 personal_projects_dir_path: "{{ home }}/personal-projects"
 personal_projects:
-    - "vscode-git-worktrees"
-    - "alexiszamanidis.github.io"
-    - "2022"
-    - "background-images"
-    - "ryd"
-    - "books"
-    - "scraper"
-    - "wheels"
+  - vscode-git-worktrees
+  - alexiszamanidis.github.io
+  - "2022"
+  - background-images
+  - ryd
+  - books
+  - scraper
+  - wheels
 npm_packages:
-    - "yarn"
-    - "expo-cli"
-    - "eas-cli"
+  - yarn
+  - expo-cli
+  - eas-cli
 oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"
 oh_my_zsh_plugins_dir_path: "{{ home }}/.oh-my-zsh/custom/plugins"
 zsh_plugins:
-    - {
-          repo: "https://github.com/zsh-users/zsh-autosuggestions.git",
-          dir: "zsh-autosuggestions",
-      }
-    - {
-          repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git",
-          dir: "zsh-syntax-highlighting",
-      }
-    - { repo: "https://github.com/agkozak/zsh-z.git", dir: "zsh-z" }
-    - {
-          repo: "https://github.com/alexiszamanidis/zsh-git-fzf.git",
-          dir: "zsh-git-fzf",
-      }
-    - { repo: "https://github.com/Aloxaf/fzf-tab.git", dir: "fzf-tab" }
-    - {
-          repo: "https://github.com/joshskidmore/zsh-fzf-history-search.git",
-          dir: "zsh-fzf-history-search",
-      }
+  - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
+  - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
+  - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
+  - { repo: https://github.com/alexiszamanidis/zsh-git-fzf.git, dir: zsh-git-fzf }
+  - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
+  - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
 fonts_dir_path: "{{ home }}/.local/share/fonts"
-font_name: "HackNerdFontMono"
+font_name: HackNerdFontMono
 font_styles:
-    - "Bold"
-    - "BoldItalic"
-    - "Italic"
-    - "Regular"
+  - Bold
+  - BoldItalic
+  - Italic
+  - Regular

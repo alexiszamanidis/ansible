@@ -1,17 +1,18 @@
+---
 - name: Create fonts directory
-  file:
-      path: "{{ fonts_dir_path }}"
-      state: directory
-  tags: &tags ["install", "fonts"]
+  ansible.builtin.file:
+    path: "{{ fonts_dir_path }}"
+    state: directory
+    mode: "0755"
 
 - name: Download Nerd Fonts
-  get_url:
-      url: "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/{{ item }}/{{ font_name }}-{{ item }}.ttf"
-      dest: "{{ fonts_dir_path }}/{{ font_name }}-{{ item }}.ttf"
+  ansible.builtin.get_url:
+    url: https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/{{ item }}/{{ font_name }}-{{ item }}.ttf
+    dest: "{{ fonts_dir_path }}/{{ font_name }}-{{ item }}.ttf"
+    mode: "0755"
   with_items: "{{ font_styles }}"
-  tags: *tags
 
 - name: Update font cache
   become: true
-  shell: fc-cache -f -v
-  tags: *tags
+  ansible.builtin.command: fc-cache -f -v
+  changed_when: false
