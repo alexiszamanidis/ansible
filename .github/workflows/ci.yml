@@ -10,7 +10,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 18.x
 
@@ -31,17 +31,34 @@ jobs:
     needs: [format]
     permissions:
       contents: write
+
     steps:
-      - name: check code out from github and into "ubuntu-latest" (or our environment)
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
-      - name: lint ansible playbook playbook.yml
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ansible and ansible-lint
+        run: |
+          pip install ansible ansible-lint==25.5.0
+
+      - name: Write Ansible Vault password to file
+        run: echo "${{ secrets.VAULT_PASSWORD }}" > /home/runner/.vault_pass.txt
+        shell: bash
+
+      - name: Install Ansible Galaxy collections (globally)
+        run: |
+          ansible-galaxy collection install ansible.posix community.general
+
+      - name: Lint Ansible playbook
         uses: ansible/ansible-lint@v25.5.0
         with:
           args: --fix -c ./.ansible-lint
-        # continue-on-error: true
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2
