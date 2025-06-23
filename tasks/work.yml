@@ -1,7 +1,7 @@
 ---
 - name: Find files and directories in submodule directory
   ansible.builtin.find:
-    paths: ansible-work
+    paths: roles/ansible-work
     file_type: any
     hidden: true
   register: ansible_work_submodule_stat
@@ -15,11 +15,12 @@
     version: master
   when: ansible_work_submodule_stat.files | length == 0
 
-- name: Check if ansible-work/local.yml exists
+- name: Check if roles/ansible-work/local.yml exists
   ansible.builtin.stat:
-    path: ansible-work/local.yml
+    path: roles/ansible-work/tasks/main.yml
   register: work_local_yaml_exists
 
-- name: Include ansible-work/local.yml if it exists
-  ansible.builtin.include_tasks: ansible-work/local.yml
-  when: work_local_yaml_exists.stat.exists
+- name: Run ansible-work role if it exists
+  ansible.builtin.import_role:
+    name: ansible-work
+  when: work_local_yaml_exists is defined and work_local_yaml_exists.stat.exists
