@@ -4,5 +4,4 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  tags: [install, productivity-tools]
   loop: "{{ productivity_tools }}"

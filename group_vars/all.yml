@@ -35,6 +35,10 @@ productivity_tools:
   - dunst
   - feh
   - flameshot
+neovim_packages:
+  - neovim
+  - xclip
+  - ripgrep
 personal_projects_dir_path: "{{ home }}/personal-projects"
 personal_projects:
   - vscode-git-worktrees

@@ -1,25 +1,26 @@
 ---
-- name: Check if .fehbg file exists
+- name: Check if file exists — {{ fehbg_file_path }}
   ansible.builtin.stat:
     path: "{{ fehbg_file_path }}"
   register: fehbg_stats
 
-- name: Select random image
+- name: Select random image from directory — {{ background_images_dir_path }}
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
       find "{{ background_images_dir_path }}" -maxdepth 2 -type f -not -path "{{ background_images_dir_path }}/.git/*" | shuf -n 1
+  register: random_image
   changed_when: false
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
-- name: Create .fehbg file
+- name: Create template file — {{ fehbg_file_path }}
   ansible.builtin.template:
     src: .fehbg.j2
-    dest: ~/.fehbg
-    mode: u=rwx,g=rx,o=r
+    dest: "{{ fehbg_file_path }}"
+    mode: "0755"
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
-- name: Set background image
+- name: Execute background setter — {{ fehbg_file_path }}
   ansible.builtin.command: "{{ fehbg_file_path }}"
   changed_when: false
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
