@@ -35,6 +35,7 @@ productivity_tools:
   - dunst
   - feh
   - flameshot
+gnome_settings_file_path: "{{ home }}/.local/share/applications/gnome-settings.desktop"
 neovim_packages:
   - neovim
   - xclip
