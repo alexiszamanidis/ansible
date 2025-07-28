@@ -44,7 +44,7 @@ personal_projects_dir_path: "{{ home }}/personal-projects"
 personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io
-  - "2022"
+  - "2025"
   - ryd
   - prettier-config
   - background-images

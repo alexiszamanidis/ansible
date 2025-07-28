@@ -11,14 +11,29 @@
     mode: "0755"
   when: not win32yank_stats.stat.exists
 
-- name: Unzip win32yank.exe
-  ansible.builtin.unarchive:
-    src: /tmp/win32yank.zip
-    dest: win32yank.exe
+- name: Create temp directory for win32yank extraction
+  ansible.builtin.file:
+    path: /tmp/win32yank_extracted
+    state: directory
     mode: "0755"
   when: not win32yank_stats.stat.exists
 
-- name: Setup win32yank.exe
-  ansible.builtin.shell: chmod +x /tmp/win32yank.exe && mv /tmp/win32yank.exe {{ bin_dir_path }}
-  changed_when: false
+- name: Unzip win32yank.exe to temp dir
+  ansible.builtin.unarchive:
+    src: /tmp/win32yank.zip
+    dest: /tmp/win32yank_extracted
+    mode: "0755"
+    remote_src: true
   when: not win32yank_stats.stat.exists
+
+- name: Setup win32yank.exe
+  ansible.builtin.command: mv /tmp/win32yank_extracted/win32yank.exe {{ bin_dir_path }}/win32yank.exe
+  when: not win32yank_stats.stat.exists
+  changed_when: false
+
+- name: Make win32yank.exe executable
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/win32yank.exe"
+    mode: "0755"
+  when: not win32yank_stats.stat.exists
+  changed_when: false
