@@ -31,7 +31,7 @@ productivity_tools:
   - i3
   - i3blocks
   - rofi
-  - compton
+  - picom
   - dunst
   - feh
   - flameshot
