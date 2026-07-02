@@ -43,6 +43,10 @@
       ansible.builtin.import_tasks: tasks/personal-projects.yml
       tags: [install, personal-projects]
 
+    - name: Import AI agents skills task
+      ansible.builtin.import_tasks: tasks/ai-agents-skills.yml
+      tags: [install, ai-agents-skills]
+
     - name: Import work task
       ansible.builtin.import_tasks: tasks/work.yml
       tags: [install, work]

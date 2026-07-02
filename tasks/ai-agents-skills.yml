@@ -1,0 +1,24 @@
+---
+- name: Ensure AI agents skills directory exists
+  ansible.builtin.file:
+    path: "{{ ai_agents_skills_link_dir_path }}"
+    state: directory
+    mode: "0755"
+
+- name: Find AI agents skill directories in repository
+  ansible.builtin.find:
+    paths: "{{ ai_agents_skills_dir_path }}"
+    file_type: directory
+    depth: 1
+  register: ai_agents_skill_dirs
+
+- name: Link AI agents skills into target directory
+  ansible.builtin.file:
+    path: "{{ ai_agents_skills_link_dir_path }}/{{ item.path | basename }}"
+    src: "{{ item.path }}"
+    state: link
+    force: true
+  loop: "{{ ai_agents_skill_dirs.files }}"
+  when: ai_agents_skill_dirs.matched > 0
+  loop_control:
+    label: "{{ item.path }}"

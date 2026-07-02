@@ -41,12 +41,16 @@ neovim_packages:
   - xclip
   - ripgrep
 personal_projects_dir_path: "{{ home }}/personal-projects"
+ai_agents_repo_path: "{{ personal_projects_dir_path }}/ai-agents"
+ai_agents_skills_dir_path: "{{ ai_agents_repo_path }}/skills"
+ai_agents_skills_link_dir_path: "{{ home }}/.agents/skills"
 personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io
   - "2025"
   - ryd
   - prettier-config
+  - ai-agents
   - background-images
   - books
 npm_packages:
