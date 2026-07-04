@@ -7,9 +7,26 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        USERNAME: ${USERNAME:-alexzam} # Passes the environment variable to build
+        USERNAME: ${USERNAME:-alexzam}
     container_name: ${CONTAINER_NAME:-ansible}
     tty: true
-    user: ${USERNAME:-alexzam} # Sets the user for the running container
+    user: ${USERNAME:-alexzam}
+    working_dir: /home/${USERNAME:-alexzam}/ansible
+    volumes:
+      - .:/home/${USERNAME:-alexzam}/ansible
     environment:
       - USERNAME=${USERNAME:-alexzam}
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: ${USERNAME:-alexzam}
+    user: ${USERNAME:-alexzam}
+    working_dir: /home/${USERNAME:-alexzam}/ansible
+    volumes:
+      - .:/home/${USERNAME:-alexzam}/ansible
+    environment:
+      - USERNAME=${USERNAME:-alexzam}
+    command: ["bash", "-lc", "ansible-playbook --syntax-check local.yml"]
