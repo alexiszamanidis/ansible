@@ -1,0 +1,52 @@
+---
+- name: Ensure AI agents link directory exists
+  ansible.builtin.file:
+    path: "{{ ai_agents_skills_link_dir_path }}"
+    state: directory
+    mode: "0755"
+
+- name: Find AI agents skill directories in the repository
+  ansible.builtin.find:
+    paths: "{{ ai_agents_skills_dir_path }}"
+    file_type: directory
+    depth: 1
+  register: ai_agents_skill_dirs
+
+- name: Link AI agents skills into the target directory
+  ansible.builtin.file:
+    path: "{{ ai_agents_skills_link_dir_path }}/{{ item.path | basename }}"
+    src: "{{ item.path }}"
+    state: link
+    force: true
+  loop: "{{ ai_agents_skill_dirs.files }}"
+  when: ai_agents_skill_dirs.matched > 0
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Check if AI agents global instruction source exists
+  ansible.builtin.stat:
+    path: "{{ ai_agents_global_instruction_source_path }}"
+  register: ai_agents_global_instruction_source
+
+- name: Ensure parent directories for AI agent instruction symlinks exist
+  ansible.builtin.file:
+    path: "{{ item | dirname }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ ai_agents_global_instruction_symlink_paths }}"
+  when:
+    - ai_agents_global_instruction_source.stat.exists
+    - ai_agents_global_instruction_symlink_paths | length > 0
+
+- name: Link AI agents instruction file into configured target paths
+  ansible.builtin.file:
+    path: "{{ item }}"
+    src: "{{ ai_agents_global_instruction_source_path }}"
+    state: link
+    force: true
+  loop: "{{ ai_agents_global_instruction_symlink_paths }}"
+  when:
+    - ai_agents_global_instruction_source.stat.exists
+    - ai_agents_global_instruction_symlink_paths | length > 0
+  loop_control:
+    label: "{{ item }}"

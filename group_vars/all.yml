@@ -44,6 +44,10 @@ personal_projects_dir_path: "{{ home }}/personal-projects"
 ai_agents_repo_path: "{{ personal_projects_dir_path }}/ai-agents"
 ai_agents_skills_dir_path: "{{ ai_agents_repo_path }}/skills"
 ai_agents_skills_link_dir_path: "{{ home }}/.agents/skills"
+ai_agents_global_instruction_source_path: "{{ ai_agents_repo_path }}/AGENTS.md"
+ai_agents_global_instruction_symlink_paths:
+  - "{{ home }}/.cursor/AGENTS.md"
+  - "{{ home }}/.github/copilot-instructions.md"
 personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io
