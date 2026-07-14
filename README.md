@@ -51,7 +51,7 @@ chmod +x ansible sync-apps && ./ansible
 3. Start the installation process
 
 ```
-ansible-playbook -t install local.yml
+ansible-playbook -t install --ask-become-pass local.yml
 ```
 
 3. Restart the terminal

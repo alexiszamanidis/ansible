@@ -19,7 +19,9 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      /tmp/sdkman_installer.sh | bash
+      bash /tmp/sdkman_installer.sh
+  args:
+    executable: /bin/bash
   changed_when: false
 
 # TODO: Should fix this!
@@ -78,7 +80,7 @@
     recursive: true
     update: true
     depth: 1
-    version: master
+    version: main
   when: not java_debug_exists.stat.exists
 
 - name: Install java-debug
@@ -97,7 +99,7 @@
     recursive: true
     update: true
     depth: 1
-    version: master
+    version: main
   when: not vscode_java_test_exists.stat.exists
 
 - name: Install vscode-java-test
