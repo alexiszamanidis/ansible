@@ -12,6 +12,22 @@
     depth: 1
   register: ai_agents_skill_dirs
 
+- name: Find existing AI agents skill links in the target directory
+  ansible.builtin.find:
+    paths: "{{ ai_agents_skills_link_dir_path }}"
+    file_type: link
+    patterns: "*"
+  register: ai_agents_existing_skill_links
+
+- name: Remove stale AI agents skill links
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ ai_agents_existing_skill_links.files }}"
+  when: (item.path | basename) not in (ai_agents_skill_dirs.files | map(attribute='path') | map('basename') | list)
+  loop_control:
+    label: "{{ item.path }}"
+
 - name: Link AI agents skills into the target directory
   ansible.builtin.file:
     path: "{{ ai_agents_skills_link_dir_path }}/{{ item.path | basename }}"
