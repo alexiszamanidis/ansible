@@ -56,9 +56,7 @@ jobs:
           ansible-galaxy collection install ansible.posix community.general
 
       - name: Lint Ansible playbook
-        uses: ansible/ansible-lint@v25.5.0
-        with:
-          args: --fix -c ./.ansible-lint
+        run: ansible-lint --fix -c ./.ansible-lint
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2

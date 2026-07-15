@@ -21,6 +21,7 @@
   args:
     chdir: "{{ ai_agents_repo_path }}"
   register: ai_agents_install_result
+  changed_when: false
 
 - name: Show AI agents install stdout
   ansible.builtin.debug:

@@ -53,10 +53,10 @@
   when: not jdt_language_server_exists.stat.exists
 
 - name: Extract jdt-language-server
-  ansible.builtin.shell: tar -zxvf jdt-language-server-1.9.0-202203031534.tar.gz
-  args:
-    chdir: "{{ java_dir_path }}/jdt-language-server"
-  changed_when: false
+  ansible.builtin.unarchive:
+    src: "{{ java_dir_path }}/jdt-language-server/jdt-language-server-1.9.0-202203031534.tar.gz"
+    dest: "{{ java_dir_path }}/jdt-language-server"
+    remote_src: true
 
 - name: Check that the lombok exists
   ansible.builtin.stat:
@@ -86,7 +86,7 @@
   when: not java_debug_exists.stat.exists
 
 - name: Install java-debug
-  ansible.builtin.shell: ./mvnw clean install
+  ansible.builtin.command: ./mvnw clean install
   args:
     chdir: "{{ java_dir_path }}/java-debug"
   changed_when: false
