@@ -1,0 +1,11 @@
+---
+- name: Download Cursor installer
+  ansible.builtin.get_url:
+    url: https://cursor.com/install
+    dest: /tmp/cursor-install.sh
+    mode: "0755"
+
+- name: Run Cursor installer
+  ansible.builtin.command: /tmp/cursor-install.sh
+  args:
+    creates: "{{ home }}/.local/bin/cursor-agent"

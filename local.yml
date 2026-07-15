@@ -47,6 +47,10 @@
       ansible.builtin.import_tasks: tasks/ai-agents.yml
       tags: [install, ai-agents]
 
+    - name: Import Cursor task
+      ansible.builtin.import_tasks: tasks/cursor.yml
+      tags: [install, cursor]
+
     - name: Import work task
       ansible.builtin.import_tasks: tasks/work.yml
       tags: [install, work]
