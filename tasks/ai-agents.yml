@@ -1,68 +1,33 @@
 ---
-- name: Ensure AI agents link directory exists
-  ansible.builtin.file:
-    path: "{{ ai_agents_skills_link_dir_path }}"
-    state: directory
-    mode: "0755"
-
-- name: Find AI agents skill directories in the repository
-  ansible.builtin.find:
-    paths: "{{ ai_agents_skills_dir_path }}"
-    file_type: directory
-    depth: 1
-  register: ai_agents_skill_dirs
-
-- name: Find existing AI agents skill links in the target directory
-  ansible.builtin.find:
-    paths: "{{ ai_agents_skills_link_dir_path }}"
-    file_type: link
-    patterns: "*"
-  register: ai_agents_existing_skill_links
-
-- name: Remove stale AI agents skill links
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    state: absent
-  loop: "{{ ai_agents_existing_skill_links.files }}"
-  when: (item.path | basename) not in (ai_agents_skill_dirs.files | map(attribute='path') | map('basename') | list)
-  loop_control:
-    label: "{{ item.path }}"
-
-- name: Link AI agents skills into the target directory
-  ansible.builtin.file:
-    path: "{{ ai_agents_skills_link_dir_path }}/{{ item.path | basename }}"
-    src: "{{ item.path }}"
-    state: link
-    force: true
-  loop: "{{ ai_agents_skill_dirs.files }}"
-  when: ai_agents_skill_dirs.matched > 0
-  loop_control:
-    label: "{{ item.path }}"
-
-- name: Check if AI agents global instruction source exists
+- name: Check if AI agents repo exists
   ansible.builtin.stat:
-    path: "{{ ai_agents_global_instruction_source_path }}"
-  register: ai_agents_global_instruction_source
+    path: "{{ ai_agents_repo_path }}"
+  register: ai_agents_repo_stats
 
-- name: Ensure parent directories for AI agent instruction symlinks exist
-  ansible.builtin.file:
-    path: "{{ item | dirname }}"
-    state: directory
-    mode: "0755"
-  loop: "{{ ai_agents_global_instruction_symlink_paths }}"
-  when:
-    - ai_agents_global_instruction_source.stat.exists
-    - ai_agents_global_instruction_symlink_paths | length > 0
+- name: Clone ai-agents repo
+  ansible.builtin.git:
+    repo: git@github.com:alexiszamanidis/ai-agents.git
+    dest: "{{ ai_agents_repo_path }}"
+    recursive: true
+    update: true
+    accept_hostkey: true
+    key_file: "{{ dest_key }}"
+    version: master
+  when: not ai_agents_repo_stats.stat.exists
 
-- name: Link AI agents instruction file into configured target paths
-  ansible.builtin.file:
-    path: "{{ item }}"
-    src: "{{ ai_agents_global_instruction_source_path }}"
-    state: link
-    force: true
-  loop: "{{ ai_agents_global_instruction_symlink_paths }}"
-  when:
-    - ai_agents_global_instruction_source.stat.exists
-    - ai_agents_global_instruction_symlink_paths | length > 0
-  loop_control:
-    label: "{{ item }}"
+- name: Run AI agents install script
+  ansible.builtin.shell: |
+    chmod +x install && ./install
+  args:
+    chdir: "{{ ai_agents_repo_path }}"
+  register: ai_agents_install_result
+
+- name: Show AI agents install stdout
+  ansible.builtin.debug:
+    msg: "{{ ai_agents_install_result.stdout_lines }}"
+  when: ai_agents_install_result.stdout != ''
+
+- name: Show AI agents install stderr
+  ansible.builtin.debug:
+    msg: "{{ ai_agents_install_result.stderr_lines }}"
+  when: ai_agents_install_result.stderr != ''

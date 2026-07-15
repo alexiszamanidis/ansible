@@ -53,7 +53,9 @@
   when: not jdt_language_server_exists.stat.exists
 
 - name: Extract jdt-language-server
-  ansible.builtin.shell: cd {{ java_dir_path }}/jdt-language-server && tar -zxvf jdt-language-server-1.9.0-202203031534.tar.gz
+  ansible.builtin.shell: tar -zxvf jdt-language-server-1.9.0-202203031534.tar.gz
+  args:
+    chdir: "{{ java_dir_path }}/jdt-language-server"
   changed_when: false
 
 - name: Check that the lombok exists
@@ -84,7 +86,9 @@
   when: not java_debug_exists.stat.exists
 
 - name: Install java-debug
-  ansible.builtin.shell: cd {{ java_dir_path }}/java-debug && ./mvnw clean install
+  ansible.builtin.shell: ./mvnw clean install
+  args:
+    chdir: "{{ java_dir_path }}/java-debug"
   changed_when: false
 
 - name: Check that the vscode-java-test exists
@@ -103,5 +107,8 @@
   when: not vscode_java_test_exists.stat.exists
 
 - name: Install vscode-java-test
-  ansible.builtin.shell: cd {{ java_dir_path }}/vscode-java-test && npm install && npm run build-plugin
+  ansible.builtin.shell: |
+    npm install && npm run build-plugin
+  args:
+    chdir: "{{ java_dir_path }}/vscode-java-test"
   changed_when: false
