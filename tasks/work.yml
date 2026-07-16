@@ -1,26 +1,10 @@
 ---
-- name: Find files and directories in submodule directory
-  ansible.builtin.find:
-    paths: roles/ansible-work
-    file_type: any
-    hidden: true
-  register: ansible_work_submodule_stat
-
-- name: Pull submodule if directory is empty
-  ansible.builtin.git:
-    repo: git@github.com:alexiszamanidis/ansible.git
-    dest: ~/ansible
-    update: true
-    recursive: true
-    version: master
-  when: ansible_work_submodule_stat.files | length == 0
-
-- name: Check if roles/ansible-work/local.yml exists
+- name: Check if ansible-work role exists
   ansible.builtin.stat:
-    path: roles/ansible-work/tasks/main.yml
-  register: work_local_yaml_exists
+    path: "{{ ansible_work_repo_path }}/tasks/main.yml"
+  register: ansible_work_role
 
 - name: Run ansible-work role if it exists
-  ansible.builtin.import_role:
-    name: ansible-work
-  when: work_local_yaml_exists is defined and work_local_yaml_exists.stat.exists
+  ansible.builtin.include_role:
+    name: "{{ ansible_work_repo_path }}"
+  when: ansible_work_role.stat.exists

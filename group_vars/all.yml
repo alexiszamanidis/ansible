@@ -42,6 +42,7 @@ neovim_packages:
   - ripgrep
 personal_projects_dir_path: "{{ home }}/personal-projects"
 ai_agents_repo_path: "{{ personal_projects_dir_path }}/ai-agents"
+ansible_work_repo_path: "{{ personal_projects_dir_path }}/ansible-work"
 personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io
@@ -50,6 +51,7 @@ personal_projects:
   - prettier-config
   - background-images
   - books
+  - ansible-work
 npm_packages:
   - yarn
   - expo-cli

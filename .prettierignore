@@ -1,5 +1,4 @@
 node_modules/
 package-lock.json
-roles/ansible-work/
 *.yaml
 *.yml
