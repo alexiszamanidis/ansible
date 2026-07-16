@@ -11,7 +11,9 @@
     mode: "0755"
 
 - name: Install Cursor Agent
-  ansible.builtin.command: /tmp/cursor-install.sh
+  ansible.builtin.command:
+    cmd: /tmp/cursor-install.sh
+    creates: "{{ bin_dir_path }}/agent"
   when: not cursor_agent_stat.stat.exists
 
 - name: Update Cursor Agent to latest
@@ -81,16 +83,12 @@
 
 - name: Update Cursor apt cache
   become: true
-  ansible.builtin.command:
-    cmd: >-
-      apt-get update
-      -o Dir::Etc::sourcelist=/etc/apt/sources.list.d/cursor.sources
-      -o Dir::Etc::sourceparts=-
-      -o APT::Get::List-Cleanup=0
+  ansible.builtin.apt:
+    update_cache: true
   changed_when: false
   when: not is_wsl
 
-- name: Install or upgrade Cursor desktop app
+- name: Install or upgrade Cursor desktop app # noqa: package-latest
   become: true
   ansible.builtin.apt:
     name: cursor

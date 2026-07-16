@@ -51,9 +51,8 @@ jobs:
         run: echo "${{ secrets.VAULT_PASSWORD }}" > /home/runner/.vault_pass.txt
         shell: bash
 
-      - name: Install Ansible Galaxy collections (globally)
-        run: |
-          ansible-galaxy collection install ansible.posix community.general
+      - name: Install Ansible Galaxy collections
+        run: ansible-galaxy collection install -r requirements.yml
 
       - name: Lint Ansible playbook
         run: ansible-lint --fix -c ./.ansible-lint
