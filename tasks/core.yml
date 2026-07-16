@@ -5,3 +5,16 @@
     name: "{{ item }}"
     state: present
   loop: "{{ core_apt_packages }}"
+
+- name: Remove incompatible apt ansible-lint package
+  become: true
+  ansible.builtin.apt:
+    name: ansible-lint
+    state: absent
+
+- name: Install pipx packages
+  ansible.builtin.command:
+    cmd: pipx install "{{ item }}"
+  loop: "{{ pipx_packages }}"
+  register: pipx_install
+  changed_when: "'installed package' in pipx_install.stdout"

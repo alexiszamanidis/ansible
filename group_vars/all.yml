@@ -26,6 +26,9 @@ core_apt_packages:
   - docker.io
   - tmux
   - shellcheck
+  - pipx
+pipx_packages:
+  - ansible-lint==25.7.0
 productivity_tools:
   - kitty
   - i3
