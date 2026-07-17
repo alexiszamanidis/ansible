@@ -1,4 +1,20 @@
 ---
+- name: Check if ansible-work repo exists
+  ansible.builtin.stat:
+    path: "{{ ansible_work_repo_path }}"
+  register: ansible_work_repo
+
+- name: Clone ansible-work repo if it does not exist
+  ansible.builtin.git:
+    repo: git@github.com:alexiszamanidis/ansible-work.git
+    dest: "{{ ansible_work_repo_path }}"
+    recursive: true
+    update: true
+    accept_hostkey: true
+    key_file: "{{ dest_key }}"
+    version: master
+  when: not ansible_work_repo.stat.exists
+
 - name: Check if ansible-work role exists
   ansible.builtin.stat:
     path: "{{ ansible_work_repo_path }}/tasks/main.yml"
