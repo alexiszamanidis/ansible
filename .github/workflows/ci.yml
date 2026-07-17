@@ -41,11 +41,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install Ansible and ansible-lint
         run: |
-          pip install ansible ansible-lint==25.7.0
+          python -m pip install ansible==14.2.0 ansible-lint==25.7.0
 
       - name: Write Ansible Vault password to file
         run: echo "${{ secrets.VAULT_PASSWORD }}" > /home/runner/.vault_pass.txt
