@@ -1,10 +1,10 @@
 ---
-- name: Check if file exists — {{ fehbg_file_path }}
+- name: Check if file exists - {{ fehbg_file_path }}
   ansible.builtin.stat:
     path: "{{ fehbg_file_path }}"
   register: fehbg_stats
 
-- name: Select random image from directory — {{ background_images_dir_path }}
+- name: Select random image from directory - {{ background_images_dir_path }}
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
@@ -13,14 +13,14 @@
   changed_when: false
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
-- name: Create template file — {{ fehbg_file_path }}
+- name: Create template file - {{ fehbg_file_path }}
   ansible.builtin.template:
     src: .fehbg.j2
     dest: "{{ fehbg_file_path }}"
     mode: "0755"
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir
 
-- name: Execute background setter — {{ fehbg_file_path }}
+- name: Execute background setter - {{ fehbg_file_path }}
   ansible.builtin.command: "{{ fehbg_file_path }}"
   changed_when: false
   when: not fehbg_stats.stat.exists or fehbg_stats.stat.isdir

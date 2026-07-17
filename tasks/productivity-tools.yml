@@ -6,12 +6,12 @@
     state: present
   loop: "{{ productivity_tools }}"
 
-- name: Check if file exists — {{ gnome_settings_file_path }}
+- name: Check if file exists - {{ gnome_settings_file_path }}
   ansible.builtin.stat:
     path: "{{ gnome_settings_file_path }}"
   register: gnome_settings_stats
 
-- name: Create template file — {{ gnome_settings_file_path }}
+- name: Create template file - {{ gnome_settings_file_path }}
   ansible.builtin.template:
     src: gnome-settings.desktop.j2
     dest: "{{ gnome_settings_file_path }}"
