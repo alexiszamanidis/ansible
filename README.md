@@ -9,19 +9,25 @@ This repository installs packages and applications that I use in my daily work
 1. Build the image
 
 ```
-docker-compose build
+docker compose build
 ```
 
-2. Run the container
+2. Run the container interactively
 
 ```
-docker-compose up
+docker compose up ubuntu_dev
 ```
 
 3. Access the container
 
 ```
-docker exec -it ansible bash
+docker compose exec ubuntu_dev bash
+```
+
+4. Validate the playbook from Docker without a full interactive session
+
+```
+docker compose run --rm test
 ```
 
 #### External Applications
