@@ -22,76 +22,47 @@
   register: cursor_agent_update
   changed_when: (cursor_agent_update.stdout | default('') | trim) != 'Checking for updates...'
 
-- name: Check for Cursor apt repository (deb822)
-  ansible.builtin.stat:
-    path: /etc/apt/sources.list.d/cursor.sources
-  register: cursor_apt_sources
-
-- name: Check for Cursor apt repository (legacy list)
-  ansible.builtin.stat:
-    path: /etc/apt/sources.list.d/cursor.list
-  register: cursor_apt_list
-
-- name: Remove conflicting Cursor apt list when deb822 source exists
+- name: Remove Cursor apt repository files
   become: true
   ansible.builtin.file:
-    path: /etc/apt/sources.list.d/cursor.list
+    path: "{{ item }}"
     state: absent
-  when: not is_wsl and cursor_apt_sources.stat.exists and cursor_apt_list.stat.exists
+  loop:
+    - /etc/apt/sources.list.d/cursor.list
+    - /etc/apt/sources.list.d/cursor.sources
+    - /usr/share/keyrings/anysphere.gpg
 
-- name: Remove legacy Cursor apt list before configuring deb822 source
-  become: true
-  ansible.builtin.file:
-    path: /etc/apt/sources.list.d/cursor.list
-    state: absent
-  when: not is_wsl and not cursor_apt_sources.stat.exists and cursor_apt_list.stat.exists
+- name: Resolve latest Cursor desktop .deb URL
+  ansible.builtin.uri:
+    url: https://api2.cursor.sh/updates/download/golden/linux-x64-deb/cursor/
+    method: HEAD
+    follow_redirects: "none"
+    status_code: [301, 302, 303, 307, 308]
+  register: cursor_deb_redirect
+  check_mode: false
 
-- name: Install gpg for Cursor apt repository
-  become: true
-  ansible.builtin.apt:
-    name: gpg
-  when: not is_wsl and not cursor_apt_sources.stat.exists
+- name: Set Cursor desktop package facts
+  ansible.builtin.set_fact:
+    cursor_deb_url: "{{ cursor_deb_redirect.location }}"
+    cursor_deb_version: "{{ cursor_deb_redirect.location | basename | regex_replace('^cursor_(.+)_amd64\\.deb$', '\\1') }}"
+  when: cursor_deb_redirect.location is defined
 
-- name: Download Cursor apt repository key
-  become: true
-  ansible.builtin.get_url:
-    url: https://downloads.cursor.com/keys/anysphere.asc
-    dest: /tmp/cursor-anysphere.asc
-    mode: "0644"
-  when: not is_wsl and not cursor_apt_sources.stat.exists
-
-- name: Dearmor Cursor apt repository key
-  become: true
+- name: Check installed Cursor desktop version
   ansible.builtin.command:
-    cmd: gpg --dearmor -o /usr/share/keyrings/anysphere.gpg /tmp/cursor-anysphere.asc
-    creates: /usr/share/keyrings/anysphere.gpg
-  when: not is_wsl and not cursor_apt_sources.stat.exists
-
-- name: Add Cursor apt repository
-  become: true
-  ansible.builtin.copy:
-    dest: /etc/apt/sources.list.d/cursor.sources
-    content: |
-      Types: deb
-      URIs: https://downloads.cursor.com/aptrepo
-      Suites: stable
-      Components: main
-      Architectures: amd64
-      Signed-By: /usr/share/keyrings/anysphere.gpg
-    mode: "0644"
-  when: not is_wsl and not cursor_apt_sources.stat.exists
-
-- name: Update Cursor apt cache
-  become: true
-  ansible.builtin.apt:
-    update_cache: true
+    cmd: dpkg-query --show --showformat='${Version}' cursor
+  register: cursor_deb_installed
   changed_when: false
-  when: not is_wsl
+  failed_when: false
 
-- name: Install or upgrade Cursor desktop app # noqa: package-latest
+- name: Download latest Cursor desktop .deb
+  ansible.builtin.get_url:
+    url: "{{ cursor_deb_url }}"
+    dest: /tmp/cursor_amd64.deb
+    mode: "0644"
+  when: cursor_deb_url is defined and (cursor_deb_installed.rc != 0 or cursor_deb_installed.stdout != cursor_deb_version)
+
+- name: Install or upgrade Cursor desktop app
   become: true
   ansible.builtin.apt:
-    name: cursor
-    state: latest
-    update_cache: false
-  when: not is_wsl
+    deb: /tmp/cursor_amd64.deb
+  when: cursor_deb_url is defined and (cursor_deb_installed.rc != 0 or cursor_deb_installed.stdout != cursor_deb_version)

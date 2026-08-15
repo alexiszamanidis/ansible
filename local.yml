@@ -49,6 +49,7 @@
 
     - name: Import Cursor task
       ansible.builtin.import_tasks: tasks/cursor.yml
+      when: not is_wsl
       tags: [install, cursor]
 
     - name: Import work task
