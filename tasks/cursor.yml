@@ -36,7 +36,7 @@
   ansible.builtin.uri:
     url: https://api2.cursor.sh/updates/download/golden/linux-x64-deb/cursor/
     method: HEAD
-    follow_redirects: "none"
+    follow_redirects: none
     status_code: [301, 302, 303, 307, 308]
   register: cursor_deb_redirect
   check_mode: false
