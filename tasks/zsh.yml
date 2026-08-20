@@ -10,40 +10,38 @@
     name: "{{ ansible_facts['user_id'] }}"
     shell: /usr/bin/zsh
 
-- name: Ensure zinit directory exists
-  ansible.builtin.file:
-    path: "{{ zinit_dir_path }}"
-    state: directory
-    mode: "0755"
-
-- name: Install zinit
-  ansible.builtin.git:
-    repo: https://github.com/zdharma-continuum/zinit.git
-    dest: "{{ zinit_home }}"
-    depth: 1
-    update: true
-    version: main
-
-- name: Ensure local bin directory exists
-  ansible.builtin.file:
-    path: "{{ bin_dir_path }}"
-    state: directory
-    mode: "0755"
-
-- name: Check if starship is installed
+- name: Check if .oh-my-zsh exists
   ansible.builtin.stat:
-    path: "{{ bin_dir_path }}/starship"
-  register: starship_stat
+    path: "{{ oh_my_zsh_dir_path }}"
+  register: oh_my_stats
 
-- name: Download starship installer
+- name: Download Oh-My-Zsh installation script
   ansible.builtin.get_url:
-    url: https://starship.rs/install.sh
-    dest: /tmp/starship-install.sh
-    mode: "0755"
-  when: not starship_stat.stat.exists
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: "{{ home }}/.oh-my-zsh-installer"
+    mode: a+x
+  when: not oh_my_stats.stat.exists
 
-- name: Install starship
-  ansible.builtin.command:
-    cmd: /tmp/starship-install.sh -y -b {{ bin_dir_path }}
-    creates: "{{ bin_dir_path }}/starship"
-  when: not starship_stat.stat.exists
+- name: Install Oh-My-Zsh
+  ansible.builtin.shell: "{{ home }}/.oh-my-zsh-installer && rm -rf {{ home }}/.oh-my-zsh-installer"
+  changed_when: false
+  when: not oh_my_stats.stat.exists
+
+- name: Check if plugins exist
+  ansible.builtin.stat:
+    path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.dir }}"
+  register: plugins_stats
+  with_items: "{{ zsh_plugins }}"
+
+- name: Install zsh plugins
+  ansible.builtin.git:
+    repo: "{{ item.item.repo }}"
+    dest: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.item.dir }}"
+    recursive: true
+    update: true
+    depth: 1
+    version: master
+  when: not item.stat.exists or not item.stat.isdir
+  loop: "{{ plugins_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"

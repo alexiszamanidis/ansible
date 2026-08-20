@@ -57,8 +57,15 @@ personal_projects:
   - ansible-work
 npm_packages:
   - yarn
-zinit_dir_path: "{{ home }}/.local/share/zinit"
-zinit_home: "{{ zinit_dir_path }}/zinit.git"
+oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"
+oh_my_zsh_plugins_dir_path: "{{ home }}/.oh-my-zsh/custom/plugins"
+zsh_plugins:
+  - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
+  - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
+  - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
+  - { repo: https://github.com/alexiszamanidis/zsh-git-fzf.git, dir: zsh-git-fzf }
+  - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
+  - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
 fonts_dir_path: "{{ home }}/.local/share/fonts"
 font_name: HackNerdFontMono
 font_styles:
