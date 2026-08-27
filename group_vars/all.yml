@@ -55,6 +55,7 @@ personal_projects:
   - background-images
   - books
   - ansible-work
+  - .github
 npm_packages:
   - yarn
 oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"
