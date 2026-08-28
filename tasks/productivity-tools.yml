@@ -4,7 +4,7 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  loop: "{{ productivity_tools }}"
+  loop: "{{ productivity_apt_packages }}"
 
 - name: Check if file exists - {{ gnome_settings_file_path }}
   ansible.builtin.stat:

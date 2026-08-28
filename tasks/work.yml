@@ -6,7 +6,7 @@
 
 - name: Clone ansible-work repo if it does not exist
   ansible.builtin.git:
-    repo: git@github.com:alexiszamanidis/ansible-work.git
+    repo: git@github.com:{{ github_user }}/ansible-work.git
     dest: "{{ ansible_work_dir_path }}"
     recursive: true
     update: true

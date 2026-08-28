@@ -11,7 +11,7 @@
 
 - name: Clone dotfiles
   ansible.builtin.git:
-    repo: git@github.com:alexiszamanidis/dotfiles.git
+    repo: git@github.com:{{ github_user }}/dotfiles.git
     dest: "{{ dotfiles_dir_path }}"
     recursive: true
     update: true
@@ -23,7 +23,7 @@
 - name: Remove all default files/folders that need to be stowed (~/.zshrc)
   ansible.builtin.file:
     state: absent
-    path: ~/.zshrc
+    path: "{{ home }}/.zshrc"
 
 - name: Stow dotfiles
   ansible.builtin.shell: |

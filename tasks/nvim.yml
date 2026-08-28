@@ -9,4 +9,4 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  loop: "{{ neovim_packages }}"
+  loop: "{{ neovim_apt_packages }}"

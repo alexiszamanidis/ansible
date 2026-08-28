@@ -2,7 +2,8 @@
 # Host
 user: "{{ lookup('env', 'USER') }}"
 home: "{{ lookup('env', 'HOME') }}"
-is_wsl: "{{ (lookup('env', 'WSL_DISTRO_NAME') != '') or (lookup('env', 'IS_WSL') != '') }}"
+github_user: alexiszamanidis
+is_wsl: "{{ ((lookup('env', 'WSL_DISTRO_NAME') | length > 0) or (lookup('env', 'IS_WSL') | length > 0)) | bool }}"
 bin_dir_path: "{{ home }}/.local/bin"
 
 # SSH
@@ -45,8 +46,8 @@ zsh_plugins:
   - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
   - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
   - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
-  - { repo: https://github.com/alexiszamanidis/zsh-git-fzf.git, dir: zsh-git-fzf }
-  - { repo: https://github.com/alexiszamanidis/zsh-ansible-fzf.git, dir: zsh-ansible-fzf }
+  - { repo: "https://github.com/{{ github_user }}/zsh-git-fzf.git", dir: zsh-git-fzf }
+  - { repo: "https://github.com/{{ github_user }}/zsh-ansible-fzf.git", dir: zsh-ansible-fzf }
   - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
   - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
 
@@ -58,7 +59,7 @@ personal_directories:
   - "{{ oh_my_zsh_plugins_dir_path }}"
 personal_projects:
   - vscode-git-worktrees
-  - alexiszamanidis.github.io
+  - "{{ github_user }}.github.io"
   - "2025"
   - ryd
   - prettier-config
@@ -74,7 +75,7 @@ ai_agents_dir_path: "{{ personal_projects_dir_path }}/ai-agents"
 ansible_work_dir_path: "{{ personal_projects_dir_path }}/ansible-work"
 
 # Neovim
-neovim_packages:
+neovim_apt_packages:
   - neovim
   - xclip
   - ripgrep
@@ -92,7 +93,7 @@ font_styles:
 dotfiles_dir_path: "{{ home }}/dotfiles"
 
 # Productivity tools
-productivity_tools:
+productivity_apt_packages:
   - kitty
   - i3
   - i3blocks

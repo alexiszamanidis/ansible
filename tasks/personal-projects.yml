@@ -4,7 +4,7 @@
     path: "{{ item }}"
     state: directory
     mode: "0755"
-  with_items: "{{ personal_directories }}"
+  loop: "{{ personal_directories }}"
   tags: [personal-env]
 
 - name: Render personal env file
@@ -18,11 +18,11 @@
   ansible.builtin.stat:
     path: "{{ personal_projects_dir_path }}/{{ item }}"
   register: repositories_stats
-  with_items: "{{ personal_projects }}"
+  loop: "{{ personal_projects }}"
 
 - name: Clone repositories
   ansible.builtin.git:
-    repo: git@github.com:alexiszamanidis/{{ item.item }}.git
+    repo: git@github.com:{{ github_user }}/{{ item.item }}.git
     dest: "{{ personal_projects_dir_path }}/{{ item.item }}"
     recursive: true
     update: true

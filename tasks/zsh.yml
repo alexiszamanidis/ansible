@@ -26,7 +26,7 @@
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     dest: "{{ home }}/.oh-my-zsh-installer"
-    mode: a+x
+    mode: "0755"
   when: not oh_my_stats.stat.exists
 
 - name: Install Oh-My-Zsh
@@ -38,7 +38,7 @@
   ansible.builtin.stat:
     path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.dir }}"
   register: plugins_stats
-  with_items: "{{ zsh_plugins }}"
+  loop: "{{ zsh_plugins }}"
 
 - name: Install zsh plugins
   ansible.builtin.git:

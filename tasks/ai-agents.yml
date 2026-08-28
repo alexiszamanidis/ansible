@@ -6,7 +6,7 @@
 
 - name: Clone ai-agents repo
   ansible.builtin.git:
-    repo: git@github.com:alexiszamanidis/ai-agents.git
+    repo: git@github.com:{{ github_user }}/ai-agents.git
     dest: "{{ ai_agents_dir_path }}"
     recursive: true
     update: true

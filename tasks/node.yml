@@ -6,28 +6,28 @@
 
 - name: Create .npm-global directory
   ansible.builtin.file:
-    path: ~/.local/.npm-global
+    path: "{{ home }}/.local/.npm-global"
     state: directory
     mode: "0755"
 
 - name: Add npm to path
-  ansible.builtin.shell: PATH=~/.local/.npm-global/bin:$PATH
+  ansible.builtin.shell: PATH={{ home }}/.local/.npm-global/bin:$PATH
   changed_when: false
 
 - name: Npm global settings
-  ansible.builtin.command: npm config set prefix '~/.local/.npm-global'
+  ansible.builtin.command: npm config set prefix {{ home }}/.local/.npm-global
   changed_when: false
 
 - name: Download nvm
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
-    dest: ~/.nvm-installer
-    mode: a+x
+    dest: "{{ home }}/.nvm-installer"
+    mode: "0755"
 
 - name: Install nvm
-  ansible.builtin.shell: ~/.nvm-installer && rm -rf ~/.nvm-installer
+  ansible.builtin.shell: "{{ home }}/.nvm-installer && rm -rf {{ home }}/.nvm-installer"
   changed_when: false
 # TODO: Should fix this!
 # - name: Install version 16 of Node
-#   ansible.builtin.shell: source ~/.bashrc && nvm install 16.16.0 && nvm alias default 16.16.0 && nvm use --delete-prefix v16.16.0 --silent
+#   ansible.builtin.shell: source {{ home }}/.bashrc && nvm install 16.16.0 && nvm alias default 16.16.0 && nvm use --delete-prefix v16.16.0 --silent
 #   changed_when: false
