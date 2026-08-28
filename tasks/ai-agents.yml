@@ -1,17 +1,17 @@
 ---
 - name: Check if AI agents repo exists
   ansible.builtin.stat:
-    path: "{{ ai_agents_repo_path }}"
+    path: "{{ ai_agents_dir_path }}"
   register: ai_agents_repo_stats
 
 - name: Clone ai-agents repo
   ansible.builtin.git:
     repo: git@github.com:alexiszamanidis/ai-agents.git
-    dest: "{{ ai_agents_repo_path }}"
+    dest: "{{ ai_agents_dir_path }}"
     recursive: true
     update: true
     accept_hostkey: true
-    key_file: "{{ dest_key }}"
+    key_file: "{{ dest_key_file_path }}"
     version: master
   when: not ai_agents_repo_stats.stat.exists
 
@@ -19,7 +19,7 @@
   ansible.builtin.shell: |
     chmod +x install && ./install
   args:
-    chdir: "{{ ai_agents_repo_path }}"
+    chdir: "{{ ai_agents_dir_path }}"
   register: ai_agents_install_result
   changed_when: false
 

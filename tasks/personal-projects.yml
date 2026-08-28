@@ -27,7 +27,7 @@
     recursive: true
     update: true
     accept_hostkey: true
-    key_file: "{{ dest_key }}"
+    key_file: "{{ dest_key_file_path }}"
     version: master
   when: not item.stat.exists or not item.stat.isdir
   loop: "{{ repositories_stats.results }}"

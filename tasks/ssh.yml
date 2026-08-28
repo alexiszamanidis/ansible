@@ -1,20 +1,20 @@
 ---
 - name: Ensure .ssh directory exists
   ansible.builtin.file:
-    dest: "{{ dest_key | dirname }}"
+    dest: "{{ dest_key_file_path | dirname }}"
     mode: "0700"
     state: directory
 
 - name: Install ssh key
   ansible.builtin.copy:
-    src: "{{ source_key }}"
-    dest: "{{ dest_key }}"
+    src: "{{ source_key_file_path }}"
+    dest: "{{ dest_key_file_path }}"
     mode: "0600"
 
 - name: Install ssh key public
   ansible.builtin.copy:
-    src: "{{ source_key }}.pub"
-    dest: "{{ dest_key }}.pub"
+    src: "{{ source_key_file_path }}.pub"
+    dest: "{{ dest_key_file_path }}.pub"
     mode: "0644"
 
 - name: Set authorized key took from file

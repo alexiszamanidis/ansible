@@ -16,7 +16,7 @@
     recursive: true
     update: true
     accept_hostkey: true
-    key_file: "{{ dest_key }}"
+    key_file: "{{ dest_key_file_path }}"
     version: master
   when: not dotfiles_stats.stat.exists
 

@@ -1,13 +1,15 @@
 ---
+# Host
 user: "{{ lookup('env', 'USER') }}"
 home: "{{ lookup('env', 'HOME') }}"
 is_wsl: "{{ (lookup('env', 'WSL_DISTRO_NAME') != '') or (lookup('env', 'IS_WSL') != '') }}"
-source_key: ./.ssh/id_rsa
-dest_key: "{{ home }}/.ssh/id_rsa"
-java_dir_path: "{{ home }}/java"
 bin_dir_path: "{{ home }}/.local/bin"
-dotfiles_dir_path: "{{ home }}/dotfiles"
-fehbg_file_path: "{{ home }}/.fehbg"
+
+# SSH
+source_key_file_path: ./.ssh/id_rsa
+dest_key_file_path: "{{ home }}/.ssh/id_rsa"
+
+# Core
 core_apt_packages:
   - git
   - snapd
@@ -28,24 +30,28 @@ core_apt_packages:
   - pipx
 pipx_packages:
   - ansible-lint==25.7.0
-productivity_tools:
-  - kitty
-  - i3
-  - i3blocks
-  - rofi
-  - picom
-  - dunst
-  - feh
-  - flameshot
-gnome_settings_file_path: "{{ home }}/.local/share/applications/gnome-settings.desktop"
-neovim_packages:
-  - neovim
-  - xclip
-  - ripgrep
+
+# Node
+npm_packages:
+  - yarn
+
+# Java
+java_dir_path: "{{ home }}/java"
+
+# ZSH
+oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"
+oh_my_zsh_plugins_dir_path: "{{ oh_my_zsh_dir_path }}/custom/plugins"
+zsh_plugins:
+  - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
+  - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
+  - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
+  - { repo: https://github.com/alexiszamanidis/zsh-git-fzf.git, dir: zsh-git-fzf }
+  - { repo: https://github.com/alexiszamanidis/zsh-ansible-fzf.git, dir: zsh-ansible-fzf }
+  - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
+  - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
+
+# Personal projects
 personal_projects_dir_path: "{{ home }}/personal-projects"
-ai_agents_repo_path: "{{ personal_projects_dir_path }}/ai-agents"
-ansible_work_repo_path: "{{ personal_projects_dir_path }}/ansible-work"
-background_images_dir_path: "{{ personal_projects_dir_path }}/background-images"
 personal_env_file_path: "{{ home }}/.personal_env"
 personal_directories:
   - "{{ personal_projects_dir_path }}"
@@ -60,18 +66,20 @@ personal_projects:
   - books
   - ansible-work
   - .github
-npm_packages:
-  - yarn
-oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"
-oh_my_zsh_plugins_dir_path: "{{ home }}/.oh-my-zsh/custom/plugins"
-zsh_plugins:
-  - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
-  - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
-  - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
-  - { repo: https://github.com/alexiszamanidis/zsh-git-fzf.git, dir: zsh-git-fzf }
-  - { repo: https://github.com/alexiszamanidis/zsh-ansible-fzf.git, dir: zsh-ansible-fzf }
-  - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
-  - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
+
+# AI agents
+ai_agents_dir_path: "{{ personal_projects_dir_path }}/ai-agents"
+
+# Work
+ansible_work_dir_path: "{{ personal_projects_dir_path }}/ansible-work"
+
+# Neovim
+neovim_packages:
+  - neovim
+  - xclip
+  - ripgrep
+
+# Fonts
 fonts_dir_path: "{{ home }}/.local/share/fonts"
 font_name: HackNerdFontMono
 font_styles:
@@ -79,3 +87,22 @@ font_styles:
   - BoldItalic
   - Italic
   - Regular
+
+# Dotfiles
+dotfiles_dir_path: "{{ home }}/dotfiles"
+
+# Productivity tools
+productivity_tools:
+  - kitty
+  - i3
+  - i3blocks
+  - rofi
+  - picom
+  - dunst
+  - feh
+  - flameshot
+gnome_settings_file_path: "{{ home }}/.local/share/applications/gnome-settings.desktop"
+
+# Background images
+background_images_dir_path: "{{ personal_projects_dir_path }}/background-images"
+fehbg_file_path: "{{ home }}/.fehbg"
