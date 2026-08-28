@@ -8,7 +8,6 @@ java_dir_path: "{{ home }}/java"
 bin_dir_path: "{{ home }}/.local/bin"
 dotfiles_dir_path: "{{ home }}/dotfiles"
 fehbg_file_path: "{{ home }}/.fehbg"
-background_images_dir_path: "{{ home }}/personal-projects/background-images"
 core_apt_packages:
   - git
   - snapd
@@ -46,6 +45,11 @@ neovim_packages:
 personal_projects_dir_path: "{{ home }}/personal-projects"
 ai_agents_repo_path: "{{ personal_projects_dir_path }}/ai-agents"
 ansible_work_repo_path: "{{ personal_projects_dir_path }}/ansible-work"
+background_images_dir_path: "{{ personal_projects_dir_path }}/background-images"
+personal_env_file_path: "{{ home }}/.personal_env"
+personal_directories:
+  - "{{ personal_projects_dir_path }}"
+  - "{{ oh_my_zsh_plugins_dir_path }}"
 personal_projects:
   - vscode-git-worktrees
   - alexiszamanidis.github.io

@@ -1,9 +1,18 @@
 ---
-- name: Create personal directory
+- name: Create personal directories
   ansible.builtin.file:
-    path: "{{ personal_projects_dir_path }}"
+    path: "{{ item }}"
     state: directory
     mode: "0755"
+  with_items: "{{ personal_directories }}"
+  tags: [personal-env]
+
+- name: Render personal env file
+  ansible.builtin.template:
+    src: .personal_env.j2
+    dest: "{{ personal_env_file_path }}"
+    mode: "0644"
+  tags: [personal-env]
 
 - name: Check if repositories exist
   ansible.builtin.stat:
