@@ -52,3 +52,23 @@
   loop: "{{ plugins_stats.results }}"
   loop_control:
     label: "{{ item.item }}"
+
+- name: Check if own plugins exist
+  ansible.builtin.stat:
+    path: "{{ oh_my_zsh_plugins_dir_path }}/{{ item }}"
+  register: own_plugins_stats
+  loop: "{{ zsh_own_plugins }}"
+
+- name: Install own zsh plugins
+  ansible.builtin.git:
+    repo: git@github.com:{{ github_user }}/{{ item.item }}.git
+    dest: "{{ oh_my_zsh_plugins_dir_path }}/{{ item.item }}"
+    recursive: true
+    update: true
+    accept_hostkey: true
+    key_file: "{{ dest_key_file_path }}"
+    version: master
+  when: not item.stat.exists or not item.stat.isdir
+  loop: "{{ own_plugins_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"

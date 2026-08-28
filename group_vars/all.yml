@@ -46,10 +46,11 @@ zsh_plugins:
   - { repo: https://github.com/zsh-users/zsh-autosuggestions.git, dir: zsh-autosuggestions }
   - { repo: https://github.com/zsh-users/zsh-syntax-highlighting.git, dir: zsh-syntax-highlighting }
   - { repo: https://github.com/agkozak/zsh-z.git, dir: zsh-z }
-  - { repo: "https://github.com/{{ github_user }}/zsh-git-fzf.git", dir: zsh-git-fzf }
-  - { repo: "https://github.com/{{ github_user }}/zsh-ansible-fzf.git", dir: zsh-ansible-fzf }
   - { repo: https://github.com/Aloxaf/fzf-tab.git, dir: fzf-tab }
   - { repo: https://github.com/joshskidmore/zsh-fzf-history-search.git, dir: zsh-fzf-history-search }
+zsh_own_plugins:
+  - zsh-git-fzf
+  - zsh-ansible-fzf
 
 # Personal projects
 personal_projects_dir_path: "{{ home }}/personal-projects"
