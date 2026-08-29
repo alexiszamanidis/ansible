@@ -60,6 +60,7 @@ personal_directories:
   - "{{ oh_my_zsh_plugins_dir_path }}"
 personal_projects:
   - vscode-git-worktrees
+  - "{{ github_user }}"
   - "{{ github_user }}.github.io"
   - "2025"
   - ryd
