@@ -5,34 +5,29 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Define build argument
-ARG USERNAME
+ARG USERNAME=alexzam
 
-# Update package lists
-RUN apt-get update
-
-# Install basic packages
-RUN apt-get install -y sudo vim
-
-# Clean up to reduce image size
-RUN apt-get clean
+# Install the packages needed for local Ansible validation
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends sudo vim ansible python3 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create the user with sudo privileges
 RUN useradd -m -s /bin/bash ${USERNAME} && \
     mkdir -p /etc/sudoers.d && \
-    echo '${USERNAME} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${USERNAME} && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
     chmod 0440 /etc/sudoers.d/${USERNAME}
-
-# Copy the current local files (your Ansible repository) into the container
-COPY . /home/${USERNAME}/ansible
 
 # Set the working directory to the ansible repository
 WORKDIR /home/${USERNAME}/ansible
 
-# Change ownership of the copied files without using sudo
-RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/ansible
+# Copy the current local files (your Ansible repository) into the container
+COPY . /home/${USERNAME}/ansible
 
-# Make the ansible script executable
-RUN chmod +x /home/${USERNAME}/ansible/ansible
+# Change ownership of the copied files without using sudo
+RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/ansible && \
+    chmod +x /home/${USERNAME}/ansible/ansible
 
 # Switch to the specified user
 USER ${USERNAME}
