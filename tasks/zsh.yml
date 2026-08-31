@@ -51,7 +51,7 @@
   when: not item.stat.exists or not item.stat.isdir
   loop: "{{ plugins_stats.results }}"
   loop_control:
-    label: "{{ item.item }}"
+    label: "{{ item.item.dir }} -> {{ oh_my_zsh_plugins_dir_path }}/{{ item.item.dir }}"
 
 - name: Check if own plugins exist
   ansible.builtin.stat:
@@ -71,4 +71,4 @@
   when: not item.stat.exists or not item.stat.isdir
   loop: "{{ own_plugins_stats.results }}"
   loop_control:
-    label: "{{ item.item }}"
+    label: "{{ item.item }} -> {{ oh_my_zsh_plugins_dir_path }}/{{ item.item }}"

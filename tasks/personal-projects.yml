@@ -32,4 +32,4 @@
   when: not item.stat.exists or not item.stat.isdir
   loop: "{{ repositories_stats.results }}"
   loop_control:
-    label: "{{ item.item }}"
+    label: "{{ item.item }} -> {{ personal_projects_dir_path }}/{{ item.item }}"
