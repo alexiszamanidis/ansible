@@ -3,7 +3,15 @@
 user: "{{ lookup('env', 'USER') }}"
 home: "{{ lookup('env', 'HOME') }}"
 github_user: alexiszamanidis
-is_wsl: "{{ ((lookup('env', 'WSL_DISTRO_NAME') | length > 0) or (lookup('env', 'IS_WSL') | length > 0)) | bool }}"
+is_wsl: >-
+  {{
+    (
+      (lookup('env', 'WSL_DISTRO_NAME') | default('', true) | length > 0) or
+      (lookup('env', 'IS_WSL') | default('', true) | length > 0) or
+      (lookup('fileglob', '/proc/sys/fs/binfmt_misc/WSLInterop', wantlist=True) | length > 0) or
+      ('microsoft' in (lookup('file', '/proc/version', errors='ignore') | default('', true) | lower))
+    ) | bool
+  }}
 bin_dir_path: "{{ home }}/.local/bin"
 
 # SSH
