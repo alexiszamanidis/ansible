@@ -17,3 +17,15 @@
     dest: "{{ gnome_settings_file_path }}"
     mode: "0755"
   when: not gnome_settings_stats.stat.exists or gnome_settings_stats.stat.isdir
+
+- name: Check if file exists - {{ downloads_file_path }}
+  ansible.builtin.stat:
+    path: "{{ downloads_file_path }}"
+  register: downloads_stats
+
+- name: Create template file - {{ downloads_file_path }}
+  ansible.builtin.template:
+    src: downloads.desktop.j2
+    dest: "{{ downloads_file_path }}"
+    mode: "0755"
+  when: not downloads_stats.stat.exists or downloads_stats.stat.isdir

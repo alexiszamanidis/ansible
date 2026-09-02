@@ -113,6 +113,7 @@ productivity_apt_packages:
   - feh
   - flameshot
 gnome_settings_file_path: "{{ home }}/.local/share/applications/gnome-settings.desktop"
+downloads_file_path: "{{ home }}/.local/share/applications/downloads.desktop"
 
 # Background images
 background_images_dir_path: "{{ personal_projects_dir_path }}/background-images"
