@@ -31,8 +31,8 @@ WORKDIR /home/${USERNAME}/ansible
 # Change ownership of the copied files without using sudo
 RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/ansible
 
-# Make the ansible script executable
-RUN chmod +x /home/${USERNAME}/ansible/ansible
+# Make the install script executable
+RUN chmod +x /home/${USERNAME}/ansible/install
 
 # Switch to the specified user
 USER ${USERNAME}

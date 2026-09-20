@@ -1,9 +1,8 @@
 ### Scripts
 
-`ansible`
+`install`
 
-This script is designed to automate the installation of Ansible on a target system, and then execute a
-series of tasks using the newly installed Ansible instance.
+This script installs Ansible on a target system so the playbook can be run.
 
 `sync-apps`
 
