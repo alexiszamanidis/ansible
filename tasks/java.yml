@@ -9,24 +9,46 @@
   ansible.builtin.apt:
     name: [openjdk-17-jdk, openjdk-17-jre]
 
+- name: Check if SDKMAN is installed
+  ansible.builtin.stat:
+    path: "{{ home }}/.sdkman/bin/sdkman-init.sh"
+  register: sdkman_init
+
 - name: Download sdkman
   ansible.builtin.get_url:
     url: https://get.sdkman.io
     dest: /tmp/sdkman_installer.sh
     mode: "0644"
+  when: not sdkman_init.stat.exists
 
 - name: Install sdkman
-  ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      bash /tmp/sdkman_installer.sh
+  ansible.builtin.command:
+    argv:
+      - bash
+      - /tmp/sdkman_installer.sh
+    creates: "{{ home }}/.sdkman/bin/sdkman-init.sh"
+  when: not sdkman_init.stat.exists
+
+- name: Check if SDKMAN Java is installed
+  ansible.builtin.stat:
+    path: "{{ home }}/.sdkman/candidates/java/current"
+  register: sdk_java_current
+
+- name: Install Java via SDKMAN
+  ansible.builtin.shell: |
+    set -euo pipefail
+    export SDKMAN_DIR="{{ home }}/.sdkman"
+    . "$SDKMAN_DIR/bin/sdkman-init.sh"
+    export SDKMAN_AUTO_ANSWER=true
+    if [ -n "{{ sdk_java_version }}" ]; then
+      sdk install java "{{ sdk_java_version }}"
+    else
+      sdk install java
+    fi
   args:
     executable: /bin/bash
-  changed_when: false
-
-# TODO: Should fix this!
-# - name: Install java via sdk
-#   shell: sdk install java
+  when: not sdk_java_current.stat.exists
+  changed_when: true
 
 - name: Create java directory
   ansible.builtin.file:

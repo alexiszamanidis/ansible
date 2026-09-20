@@ -2,7 +2,7 @@
 
 `install`
 
-This script installs Ansible on a target system so the playbook can be run.
+This script installs Ansible, creates `~/.vault_pass.txt` if it is missing, then runs the playbook.
 
 `sync-apps`
 

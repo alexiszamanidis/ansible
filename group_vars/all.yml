@@ -41,11 +41,14 @@ pipx_packages:
   - ansible-lint==25.7.0
 
 # Node
+nvm_node_version: 16.16.0
 npm_packages:
   - yarn
 
 # Java
 java_dir_path: "{{ home }}/java"
+# Empty installs SDKMAN's default Java. Set a candidate id (for example 17.0.12-tem) to pin it.
+sdk_java_version: ""
 
 # ZSH
 oh_my_zsh_dir_path: "{{ home }}/.oh-my-zsh"

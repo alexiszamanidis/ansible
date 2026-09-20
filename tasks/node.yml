@@ -18,16 +18,37 @@
   ansible.builtin.command: npm config set prefix {{ home }}/.local/.npm-global
   changed_when: false
 
+- name: Check if nvm is installed
+  ansible.builtin.stat:
+    path: "{{ home }}/.nvm/nvm.sh"
+  register: nvm_sh
+
 - name: Download nvm
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
     dest: "{{ home }}/.nvm-installer"
     mode: "0755"
+  when: not nvm_sh.stat.exists
 
 - name: Install nvm
-  ansible.builtin.shell: "{{ home }}/.nvm-installer && rm -rf {{ home }}/.nvm-installer"
-  changed_when: false
-# TODO: Should fix this!
-# - name: Install version 16 of Node
-#   ansible.builtin.shell: source {{ home }}/.bashrc && nvm install 16.16.0 && nvm alias default 16.16.0 && nvm use --delete-prefix v16.16.0 --silent
-#   changed_when: false
+  ansible.builtin.command: "{{ home }}/.nvm-installer"
+  args:
+    creates: "{{ home }}/.nvm/nvm.sh"
+  when: not nvm_sh.stat.exists
+
+- name: Remove nvm installer
+  ansible.builtin.file:
+    path: "{{ home }}/.nvm-installer"
+    state: absent
+
+- name: Install Node.js via nvm {{ nvm_node_version }}
+  ansible.builtin.shell: |
+    set -euo pipefail
+    export NVM_DIR="{{ home }}/.nvm"
+    . "$NVM_DIR/nvm.sh"
+    nvm install "{{ nvm_node_version }}"
+    nvm alias default "{{ nvm_node_version }}"
+    nvm use --delete-prefix "v{{ nvm_node_version }}" --silent
+  args:
+    executable: /bin/bash
+    creates: "{{ home }}/.nvm/versions/node/v{{ nvm_node_version }}"
