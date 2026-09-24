@@ -1,41 +1,39 @@
-# Use Ubuntu 20.04 LTS as the base image
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
-# Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
 
-# Define build argument
-ARG USERNAME
+ARG USERNAME=alexzam
+ARG USER_ID=1000
+ENV USER=${USERNAME}
 
-# Update package lists
-RUN apt-get update
+# Ubuntu's security mirror can advertise a package and then 404 it while the pocket updates.
+RUN set -eu; \
+    ok=0; \
+    for attempt in 1 2 3; do \
+        if apt-get update && \
+            apt-get install -y --no-install-recommends \
+                sudo vim ca-certificates curl git software-properties-common && \
+            add-apt-repository -y ppa:ansible/ansible && \
+            apt-get update && \
+            apt-get install -y ansible; then \
+            ok=1; \
+            break; \
+        fi; \
+        echo "apt attempt ${attempt} failed, retrying"; \
+        rm -rf /var/lib/apt/lists/*; \
+        sleep 15; \
+    done; \
+    test "$ok" = 1
 
-# Install basic packages
-RUN apt-get install -y sudo vim
-
-# Clean up to reduce image size
-RUN apt-get clean
-
-# Create the user with sudo privileges
-RUN useradd -m -s /bin/bash ${USERNAME} && \
+# ubuntu:24.04 ships an `ubuntu` user at uid 1000; replace it with the test user.
+RUN if getent passwd ubuntu >/dev/null; then userdel -r ubuntu || true; fi && \
+    if getent group ubuntu >/dev/null; then groupdel ubuntu || true; fi && \
+    useradd -m -s /bin/bash -u "${USER_ID}" "${USERNAME}" && \
     mkdir -p /etc/sudoers.d && \
-    echo '${USERNAME} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${USERNAME} && \
-    chmod 0440 /etc/sudoers.d/${USERNAME}
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" && \
+    chmod 0440 "/etc/sudoers.d/${USERNAME}"
 
-# Copy the current local files (your Ansible repository) into the container
-COPY . /home/${USERNAME}/ansible
-
-# Set the working directory to the ansible repository
-WORKDIR /home/${USERNAME}/ansible
-
-# Change ownership of the copied files without using sudo
-RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/ansible
-
-# Make the install script executable
-RUN chmod +x /home/${USERNAME}/ansible/install
-
-# Switch to the specified user
 USER ${USERNAME}
-
-# Default command
-CMD ["bash"]
+WORKDIR /home/${USERNAME}/ansible
+CMD ["./install"]

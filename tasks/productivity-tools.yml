@@ -2,9 +2,21 @@
 - name: Install productivity tools
   become: true
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name: "{{ productivity_apt_packages }}"
     state: present
+
+- name: Log productivity apt package
+  ansible.builtin.debug:
+    msg: "{{ item }}"
   loop: "{{ productivity_apt_packages }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "{{ gnome_settings_file_path | dirname }}"
+    state: directory
+    mode: "0755"
 
 - name: Check if file exists - {{ gnome_settings_file_path }}
   ansible.builtin.stat:

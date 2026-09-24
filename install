@@ -1,20 +1,56 @@
 #!/usr/bin/env bash
 
-# Install ansible
-# The PPA only publishes the latest build, so pinning a version breaks on every release
-sudo apt-get update -y
-sudo apt-get install -y curl git software-properties-common
-sudo apt-add-repository -y ppa:ansible/ansible
-sudo apt-get update -y
-sudo apt-get install -y ansible
+set -euo pipefail
 
-# Create the vault password file
-if [ ! -s ~/.vault_pass.txt ]; then
-    read -r -s -p "Ansible vault password: " vault_pass
-    printf '\n'
-    printf '%s\n' "$vault_pass" > ~/.vault_pass.txt
+# The PPA only publishes the latest build, so pinning a version breaks on every release.
+# The Docker image already ships Ansible, so this is skipped there.
+if ! command -v ansible-playbook > /dev/null 2>&1; then
+    sudo apt-get update -y
+    sudo apt-get install -y curl git software-properties-common
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update -y
+    sudo apt-get install -y ansible
 fi
-chmod 0600 ~/.vault_pass.txt
 
-# Run the playbook
-ansible-playbook -t install --ask-become-pass local.yml
+vault_pass_file="${HOME}/.vault_pass.txt"
+vault_pass_source="${VAULT_PASS_SOURCE:-/run/secrets/vault_pass}"
+# A missing bind-mount source is created as a directory.
+if [ -d "$vault_pass_file" ]; then
+    echo "$vault_pass_file is a directory. Remove it and use a real vault password file." >&2
+    exit 1
+fi
+
+if [ -s "$vault_pass_source" ]; then
+    # The mounted file keeps its host ownership, so copy it into a file this user owns.
+    sudo cat "$vault_pass_source" | sudo tee "$vault_pass_file" > /dev/null
+    sudo chown "$(id -u):$(id -g)" "$vault_pass_file"
+elif [ ! -r "$vault_pass_file" ] || [ ! -s "$vault_pass_file" ]; then
+    if [ -n "${ANSIBLE_VAULT_PASSWORD:-}" ]; then
+        printf '%s\n' "$ANSIBLE_VAULT_PASSWORD" > "$vault_pass_file"
+    elif [ ! -t 0 ]; then
+        echo "Mount a vault password file at $vault_pass_source, set ANSIBLE_VAULT_PASSWORD, or create $vault_pass_file" >&2
+        exit 1
+    else
+        read -r -s -p "Ansible vault password: " vault_pass
+        printf '\n'
+        printf '%s\n' "$vault_pass" > "$vault_pass_file"
+    fi
+fi
+chmod 0600 "$vault_pass_file"
+
+if [ ! -d "${HOME}/.ansible/collections/ansible_collections/community/general" ]; then
+    ansible-galaxy collection install -r requirements.yml
+fi
+
+cd "$(dirname "$0")"
+
+playbook_args=(-t install local.yml)
+if [ -n "${SKIP_TAGS:-}" ]; then
+    playbook_args+=(--skip-tags "$SKIP_TAGS")
+fi
+# The image grants passwordless sudo. A prompt would hang `docker compose run -T`.
+if [ ! -f /.dockerenv ]; then
+    playbook_args+=(--ask-become-pass)
+fi
+
+exec ansible-playbook "${playbook_args[@]}" "$@"
