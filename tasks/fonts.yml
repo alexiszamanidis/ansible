@@ -1,4 +1,10 @@
 ---
+- name: Install fontconfig
+  become: true
+  ansible.builtin.apt:
+    name: fontconfig
+    state: present
+
 - name: Create fonts directory
   ansible.builtin.file:
     path: "{{ fonts_dir_path }}"

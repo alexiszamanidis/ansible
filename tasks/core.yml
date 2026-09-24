@@ -2,9 +2,15 @@
 - name: Install core apt system packages
   become: true
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name: "{{ core_apt_packages }}"
     state: present
+
+- name: Log core apt package
+  ansible.builtin.debug:
+    msg: "{{ item }}"
   loop: "{{ core_apt_packages }}"
+  loop_control:
+    label: "{{ item }}"
 
 - name: Remove incompatible apt ansible-lint package
   become: true

@@ -1,15 +1,19 @@
 ---
-version: "3.8"
-
 services:
   ubuntu_dev:
+    image: ansible-ubuntu_dev
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        USERNAME: ${USERNAME:-alexzam} # Passes the environment variable to build
-    container_name: ${CONTAINER_NAME:-ansible}
+        USERNAME: ${USERNAME:-alexzam}
+        USER_ID: ${USER_ID:-1000}
     tty: true
-    user: ${USERNAME:-alexzam} # Sets the user for the running container
+    user: ${USERNAME:-alexzam}
     environment:
-      - USERNAME=${USERNAME:-alexzam}
+      - USER=${USERNAME:-alexzam}
+      - HOME=/home/${USERNAME:-alexzam}
+      - SKIP_TAGS=${SKIP_TAGS:-work}
+    volumes:
+      - .:/home/${USERNAME:-alexzam}/ansible
+      - ${HOME}/.vault_pass.txt:/run/secrets/vault_pass:ro

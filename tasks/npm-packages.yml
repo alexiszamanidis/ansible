@@ -1,6 +1,10 @@
 ---
+# Global packages belong to the nvm-managed Node.js, not to the apt one
 - name: Install npm packages
   community.general.npm:
     name: "{{ item }}"
     global: true
+    executable: "{{ nvm_bin_dir_path }}/npm"
+  environment:
+    PATH: "{{ nvm_bin_dir_path }}:{{ ansible_facts['env']['PATH'] }}"
   loop: "{{ npm_packages }}"

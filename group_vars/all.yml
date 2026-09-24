@@ -21,7 +21,6 @@ dest_key_file_path: "{{ home }}/.ssh/id_rsa"
 # Core
 core_apt_packages:
   - git
-  - snapd
   - curl
   - wget
   - zip
@@ -42,6 +41,7 @@ pipx_packages:
 
 # Node
 nvm_node_version: 16.16.0
+nvm_bin_dir_path: "{{ home }}/.nvm/versions/node/v{{ nvm_node_version }}/bin"
 npm_packages:
   - yarn
 

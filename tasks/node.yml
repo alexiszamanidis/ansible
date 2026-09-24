@@ -4,19 +4,18 @@
   ansible.builtin.apt:
     name: [nodejs, npm]
 
-- name: Create .npm-global directory
-  ansible.builtin.file:
-    path: "{{ home }}/.local/.npm-global"
-    state: directory
-    mode: "0755"
+- name: Check if .npmrc exists
+  ansible.builtin.stat:
+    path: "{{ home }}/.npmrc"
+  register: npmrc_stat
 
-- name: Add npm to path
-  ansible.builtin.shell: PATH={{ home }}/.local/.npm-global/bin:$PATH
-  changed_when: false
-
-- name: Npm global settings
-  ansible.builtin.command: npm config set prefix {{ home }}/.local/.npm-global
-  changed_when: false
+# nvm refuses to switch versions while npm has a prefix outside of NVM_DIR
+- name: Remove npm prefix settings
+  ansible.builtin.lineinfile:
+    path: "{{ home }}/.npmrc"
+    regexp: ^(prefix|globalconfig)=
+    state: absent
+  when: npmrc_stat.stat.exists
 
 - name: Check if nvm is installed
   ansible.builtin.stat:
@@ -48,7 +47,7 @@
     . "$NVM_DIR/nvm.sh"
     nvm install "{{ nvm_node_version }}"
     nvm alias default "{{ nvm_node_version }}"
-    nvm use --delete-prefix "v{{ nvm_node_version }}" --silent
+    nvm use "v{{ nvm_node_version }}" --silent
   args:
     executable: /bin/bash
     creates: "{{ home }}/.nvm/versions/node/v{{ nvm_node_version }}"
