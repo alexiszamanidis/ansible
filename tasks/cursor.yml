@@ -58,7 +58,8 @@
 # <version>-<build>. Treat an installed build of that version as current.
 - name: Determine whether Cursor desktop install is required
   ansible.builtin.set_fact:
-    cursor_deb_install_required: "{{ cursor_deb_installed.rc != 0 or (cursor_deb_installed.stdout != cursor_deb_version and cursor_deb_installed.stdout is not match('^' ~ (cursor_deb_version | regex_escape) ~ '-')) }}"
+    cursor_deb_install_required: "{{ cursor_deb_installed.rc != 0 or (cursor_deb_installed.stdout != cursor_deb_version and cursor_deb_installed.stdout is not match('^'
+      ~ (cursor_deb_version | regex_escape) ~ '-')) }}"
   when: cursor_deb_url is defined
 
 - name: Download latest Cursor desktop .deb
