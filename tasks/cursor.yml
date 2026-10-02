@@ -54,15 +54,37 @@
   changed_when: false
   failed_when: false
 
+# The download name is cursor_<version>_amd64.deb, while dpkg records
+# <version>-<build>. Treat an installed build of that version as current.
+- name: Determine whether Cursor desktop install is required
+  ansible.builtin.set_fact:
+    cursor_deb_install_required: "{{ cursor_deb_installed.rc != 0 or (cursor_deb_installed.stdout != cursor_deb_version and cursor_deb_installed.stdout is not match('^' ~ (cursor_deb_version | regex_escape) ~ '-')) }}"
+  when: cursor_deb_url is defined
+
 - name: Download latest Cursor desktop .deb
   ansible.builtin.get_url:
     url: "{{ cursor_deb_url }}"
     dest: /tmp/cursor_amd64.deb
     mode: "0644"
-  when: cursor_deb_url is defined and (cursor_deb_installed.rc != 0 or cursor_deb_installed.stdout != cursor_deb_version)
+  when: cursor_deb_install_required | default(false) | bool
 
+# ansible.builtin.apt refuses this package: it Conflicts with its own name,
+# and python-apt reports that as breaking the installed cursor package.
+# apt-get installs the upgrade correctly.
 - name: Install or upgrade Cursor desktop app
   become: true
-  ansible.builtin.apt:
-    deb: /tmp/cursor_amd64.deb
-  when: cursor_deb_url is defined and (cursor_deb_installed.rc != 0 or cursor_deb_installed.stdout != cursor_deb_version)
+  ansible.builtin.command:
+    argv:
+      - apt-get
+      - install
+      - -y
+      - -o
+      - Dpkg::Options::=--force-confdef
+      - -o
+      - Dpkg::Options::=--force-confold
+      - /tmp/cursor_amd64.deb
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  register: cursor_deb_install
+  changed_when: "'Unpacking cursor' in cursor_deb_install.stdout"
+  when: cursor_deb_install_required | default(false) | bool
