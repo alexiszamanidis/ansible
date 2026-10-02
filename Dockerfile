@@ -24,7 +24,8 @@ RUN set -eu; \
         rm -rf /var/lib/apt/lists/*; \
         sleep 15; \
     done; \
-    test "$ok" = 1
+    test "$ok" = 1; \
+    rm -rf /var/lib/apt/lists/*
 
 # ubuntu:24.04 ships an `ubuntu` user at uid 1000; replace it with the test user.
 RUN if getent passwd ubuntu >/dev/null; then userdel -r ubuntu || true; fi && \

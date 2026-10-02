@@ -3,6 +3,10 @@ name: docker-test
 
 on: workflow_dispatch
 
+concurrency:
+  group: docker-test
+  cancel-in-progress: true
+
 jobs:
   docker-test:
     runs-on: ubuntu-latest
@@ -15,6 +19,8 @@ jobs:
       - uses: docker/setup-buildx-action@v4
       - name: Build image
         uses: docker/build-push-action@v7
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           load: true
@@ -31,4 +37,4 @@ jobs:
         run: |
           printf '%s\n' "$ANSIBLE_VAULT_PASSWORD" > "$HOME/.vault_pass.txt"
           chmod 0600 "$HOME/.vault_pass.txt"
-          docker compose up --exit-code-from ubuntu_dev
+          docker compose up --no-build --exit-code-from ubuntu_dev
