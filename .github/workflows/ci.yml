@@ -17,4 +17,5 @@ jobs:
       VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
     with:
       use-vault: true
+      ansible-lint-version: 26.9.0
       install-galaxy: true

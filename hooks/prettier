@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+# Git hooks do not load nvm, so Node is often missing when an editor runs git.
+if ! command -v node > /dev/null 2>&1; then
+    export NVM_DIR="${HOME}/.nvm"
+    if [ -s "${NVM_DIR}/nvm.sh" ]; then
+        set +u
+        # shellcheck disable=SC1091
+        . "${NVM_DIR}/nvm.sh"
+        set -u
+    fi
+fi
+
+if ! command -v npm > /dev/null 2>&1; then
+    echo "prettier needs Node.js and npm. Install them, then run npm ci." >&2
+    exit 1
+fi
+
+if [ ! -x node_modules/.bin/prettier ]; then
+    npm ci
+fi
+
+# No staged files. Prettier would otherwise wait for stdin.
+if [ "$#" -eq 0 ]; then
+    exit 0
+fi
+
+# .prettierignore applies to these paths. --ignore-unknown skips files with no parser.
+exec node_modules/.bin/prettier --write --ignore-unknown "$@"

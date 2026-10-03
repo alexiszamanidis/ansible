@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+vault_pass_file="${HOME}/.vault_pass.txt"
+if [ ! -r "$vault_pass_file" ] || [ ! -s "$vault_pass_file" ]; then
+    echo "ansible-lint needs a readable vault password in ${vault_pass_file}." >&2
+    exit 1
+fi
+
+collections_dir="${HOME}/.ansible/collections/ansible_collections"
+if [ ! -d "${collections_dir}/community/general" ] || [ ! -d "${collections_dir}/ansible/posix" ]; then
+    ansible-galaxy collection install -r requirements.yml
+fi
+
+# No staged files. With no paths, ansible-lint lints the whole repository.
+if [ "$#" -eq 0 ]; then
+    exit 0
+fi
+
+exec ansible-lint --fix -c ./.ansible-lint "$@"

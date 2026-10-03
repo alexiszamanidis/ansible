@@ -1,0 +1,22 @@
+---
+repos:
+  - repo: local
+    hooks:
+      # .prettierignore decides which staged files are formatted.
+      - id: prettier
+        name: prettier
+        entry: ./hooks/prettier
+        language: system
+        verbose: true
+
+      # Staged paths only. ansible-lint skips files it does not recognize.
+      # ansible-lint matches ci.yml. ansible-core matches the workflow's Ansible 14.2.0.
+      # Collections come from requirements.yml, not the bundled ansible package.
+      - id: ansible-lint
+        name: ansible-lint
+        entry: ./hooks/ansible-lint
+        language: python
+        verbose: true
+        additional_dependencies:
+          - ansible-core==2.21.4
+          - ansible-lint==26.9.0
