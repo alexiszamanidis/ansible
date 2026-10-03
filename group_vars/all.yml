@@ -37,7 +37,7 @@ core_apt_packages:
   - shellcheck
   - pipx
 pipx_packages:
-  - ansible-lint==25.7.0
+  - ansible-lint==26.9.0
 
 # Node
 nvm_node_version: 16.16.0

@@ -18,9 +18,19 @@
     name: ansible-lint
     state: absent
 
+- name: List installed pipx packages
+  ansible.builtin.command:
+    cmd: pipx list --short
+  register: pipx_list
+  changed_when: false
+
 - name: Install pipx packages
   ansible.builtin.command:
-    cmd: pipx install "{{ item }}"
+    cmd: pipx install --force "{{ item }}"
   loop: "{{ pipx_packages }}"
+  # Pinned specs (name==version) reinstall on version mismatch; bare names install only when missing.
+  when:
+    - item not in pipx_list.stdout_lines | map('regex_replace', '^(\\S+) (\\S+)$', '\\1==\\2')
+    - item not in pipx_list.stdout_lines | map('regex_replace', ' .*$', '')
   register: pipx_install
   changed_when: "'installed package' in pipx_install.stdout"
