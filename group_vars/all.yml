@@ -80,6 +80,7 @@ personal_projects:
   - books
   - ansible-work
   - .github
+  - windows
 
 # AI agents
 ai_agents_dir_path: "{{ personal_projects_dir_path }}/ai-agents"
