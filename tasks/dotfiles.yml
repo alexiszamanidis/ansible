@@ -42,22 +42,3 @@
   ansible.builtin.debug:
     msg: "{{ dotfiles_stow_result.stderr_lines }}"
   when: dotfiles_stow_result.stderr != ''
-
-- name: Stow wsl
-  ansible.builtin.shell: |
-    chmod +x wsl && ./wsl
-  args:
-    chdir: "{{ dotfiles_dir_path }}"
-  register: dotfiles_wsl_result
-  changed_when: false
-  when: is_wsl
-
-- name: Show dotfiles wsl stdout
-  ansible.builtin.debug:
-    msg: "{{ dotfiles_wsl_result.stdout_lines }}"
-  when: is_wsl and dotfiles_wsl_result.stdout != ''
-
-- name: Show dotfiles wsl stderr
-  ansible.builtin.debug:
-    msg: "{{ dotfiles_wsl_result.stderr_lines }}"
-  when: is_wsl and dotfiles_wsl_result.stderr != ''
