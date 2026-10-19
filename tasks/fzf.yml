@@ -33,39 +33,15 @@
     state: link
     force: true
 
-# Alternative until bat 0.21.0 is available
-# I need this version of bat, otherwise it crushes with the ripgrep installation
-- name: Download bat
-  become: true
-  ansible.builtin.get_url:
-    url: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
-    dest: "{{ home }}/.bat-installer"
-    mode: "0644"
-
 - name: Install bat
   become: true
-  ansible.builtin.shell: dpkg -i {{ home }}/.bat-installer && rm -rf {{ home }}/.bat-installer
-  changed_when: false
+  ansible.builtin.apt:
+    name: [bat]
+    state: present
 
-# - name: Install bat
-#   become: true
-#   ansible.builtin.apt:
-#     name: ["bat"]
-
-# - name: Check that the bat exists
-#   ansible.builtin.stat:
-#     path: "{{ bin_dir_path }}/bat"
-#   register: bat_exists
-
-# - name: Remove the bat folder
-#   ansible.builtin.file:
-#     path: "{{ bin_dir_path }}/bat"
-#     state: absent
-#   when: bat_exists.stat.isdir is defined and bat_exists.stat.isdir
-
-# - name: Link bat
-#   ansible.builtin.file:
-#     path: "{{ bin_dir_path }}/bat"
-#     src: /usr/bin/batcat
-#     state: link
-#     force: true
+- name: Link bat command
+  ansible.builtin.file:
+    path: "{{ bin_dir_path }}/bat"
+    src: /usr/bin/batcat
+    state: link
+    force: true
