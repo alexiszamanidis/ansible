@@ -20,10 +20,3 @@ Requires `~/.vault_pass.txt`. `USERNAME` defaults to `alexzam`, `USER_ID` to `10
 ```
 docker compose up --build
 ```
-
-### Reminders
-
-#### External Applications
-
--   VSCode: Sign in via GitHub
--   Excalidraw: Download as PWA
