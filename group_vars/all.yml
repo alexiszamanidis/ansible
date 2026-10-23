@@ -66,9 +66,27 @@ zsh_own_plugins:
 # Personal projects
 personal_projects_dir_path: "{{ home }}/personal-projects"
 personal_env_file_path: "{{ home }}/.personal_env"
-personal_directories:
-  - "{{ personal_projects_dir_path }}"
-  - "{{ oh_my_zsh_plugins_dir_path }}"
+windows_user_profile_path: >-
+  {{
+    lookup(
+      'pipe',
+      'wslpath -u "$(cmd.exe /c echo %USERPROFILE% | tr -d "\\r")"'
+    ) | trim
+  }}
+wsl_personal_directories: >-
+  {{
+    [
+      windows_user_profile_path ~ '/Downloads',
+      windows_user_profile_path ~ '/OneDrive/Desktop'
+    ] if is_wsl | bool else []
+  }}
+personal_directories: >-
+  {{
+    [
+      personal_projects_dir_path,
+      oh_my_zsh_plugins_dir_path
+    ] + wsl_personal_directories
+  }}
 personal_projects:
   - vscode-git-worktrees
   - "{{ github_user }}"
