@@ -40,7 +40,7 @@ pipx_packages:
   - ansible-lint==26.9.0
 
 # Node
-nvm_node_version: 16.16.0
+nvm_node_version: 26.13.0
 nvm_bin_dir_path: "{{ home }}/.nvm/versions/node/v{{ nvm_node_version }}/bin"
 npm_packages:
   - yarn
